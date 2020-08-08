@@ -6,7 +6,7 @@
  * Laurea in Informatica, UniBO, a.a. 2019/2020
  * 
 */
-package movida.commons;
+package src.commons;
 
 /**
  * 
@@ -47,7 +47,7 @@ public interface IMovidaSearch {
 	/**
 	 * Ricerca film per regista. 
 	 * 
-	 * Restituisce i film diretti dal regista il cui nome è passato come parametro. 
+	 * Restituisce i film diretti dal regista il cui nome ÔøΩ passato come parametro. 
 	 *  
 	 * Restituisce un vettore vuoto se nessun film rispetta il criterio di ricerca.  
 	 *  
@@ -60,7 +60,7 @@ public interface IMovidaSearch {
 	 * Ricerca film per attore. 
 	 * 
 	 * Restituisce i film a cui ha partecipato come attore 
-	 * la persona il cui nome è passato come parametro. 
+	 * la persona il cui nome ÔøΩ passato come parametro. 
 	 *  
 	 * Restituisce un vettore vuoto se nessun film rispetta il criterio di ricerca.  
 	 *  
@@ -70,12 +70,12 @@ public interface IMovidaSearch {
 	public Movie[] searchMoviesStarredBy(String name);
 
 	/**
-	 * Ricerca film più votati. 
+	 * Ricerca film piÔøΩ votati. 
 	 * 
 	 * Restituisce gli <code>N</code> film che hanno 
-	 * ricevuto più voti, in ordine decrescente di voti.
+	 * ricevuto piÔøΩ voti, in ordine decrescente di voti.
 	 * 
-	 * Se il numero di film totali è minore di N restituisce tutti i film,
+	 * Se il numero di film totali ÔøΩ minore di N restituisce tutti i film,
 	 * comunque in ordine.
 	 *   
 	 * @param N numero di film che la ricerca deve resistuire  
@@ -84,12 +84,12 @@ public interface IMovidaSearch {
 	public Movie[] searchMostVotedMovies(Integer N);
 
 	/**
-	 * Ricerca film più recenti. 
+	 * Ricerca film piÔøΩ recenti. 
 	 * 
-	 * Restituisce gli <code>N</code> film più recenti,
+	 * Restituisce gli <code>N</code> film piÔøΩ recenti,
 	 * in base all'anno di uscita in sala confrontato con l'anno corrente.
 	 * 
-	 * Se il numero di film totali è minore di N restituisce tutti i film,
+	 * Se il numero di film totali ÔøΩ minore di N restituisce tutti i film,
 	 * comunque in ordine.
 	 *   
 	 * @param N numero di film che la ricerca deve resistuire
@@ -98,12 +98,12 @@ public interface IMovidaSearch {
 	public Movie[] searchMostRecentMovies(Integer N);
 
 	/**
-	 * Ricerca gli attori più attivi. 
+	 * Ricerca gli attori piÔøΩ attivi. 
 	 * 
 	 * Restituisce gli <code>N</code> attori che hanno partecipato al numero 
-	 * più alto di film
+	 * piÔøΩ alto di film
 	 * 
-	 * Se il numero di attori è minore di N restituisce tutti gli attori,
+	 * Se il numero di attori ÔøΩ minore di N restituisce tutti gli attori,
 	 * comunque in ordine.
 	 *
 	 * @param N numero di attori che la ricerca deve resistuire

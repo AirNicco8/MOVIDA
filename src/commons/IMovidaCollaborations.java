@@ -6,7 +6,7 @@
  * Laurea in Informatica, UniBO, a.a. 2019/2020
  * 
 */
-package movida.commons;
+package src.commons;
 
 /**
  * 
@@ -46,7 +46,7 @@ public interface IMovidaCollaborations {
 	/**
 	 * Identificazione dell'insieme di collaborazioni 
 	 * caratteristiche (ICC) del team di cui un attore fa parte
-	 * e che ha lo score complessivo più alto
+	 * e che ha lo score complessivo piÔøΩ alto
 	 * 
 	 * Vedi slide per maggiori informazioni su score e ICC.
 	 *  

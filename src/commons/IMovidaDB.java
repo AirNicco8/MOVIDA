@@ -6,7 +6,7 @@
  * Laurea in Informatica, UniBO, a.a. 2019/2020
  * 
 */
-package movida.commons;
+package src.commons;
 
 import java.io.File;
 
@@ -21,10 +21,10 @@ public interface IMovidaDB {
 	/**
 	 * Carica i dati da un file, organizzato secondo il formato MOVIDA (vedi esempio-formato-dati.txt)
 	 * 
-	 * Un film è identificato in modo univoco dal titolo (case-insensitive), una persona dal nome (case-insensitive). 
+	 * Un film ÔøΩ identificato in modo univoco dal titolo (case-insensitive), una persona dal nome (case-insensitive). 
 	 * Semplificazione: non sono gestiti omonimi e film con lo stesso titolo.
 	 * 
-	 * I nuovi dati sono aggiunti a quelli già caricati.
+	 * I nuovi dati sono aggiunti a quelli giÔøΩ caricati.
 	 * 
 	 * Se esiste un film con lo stesso titolo il record viene sovrascritto.
 	 * Se esiste una persona con lo stesso nome non ne viene creata un'altra.
@@ -41,8 +41,8 @@ public interface IMovidaDB {
 	/**
 	 * Salva tutti i dati su un file. 
 	 * 
-	 * Il file è sovrascritto.
-	 * Se non è possibile salvare, ad esempio per un problema di permessi o percorsi,
+	 * Il file ÔøΩ sovrascritto.
+	 * Se non ÔøΩ possibile salvare, ad esempio per un problema di permessi o percorsi,
 	 * viene sollevata un'eccezione.
 	 * 
 	 * @param f il file su cui salvare i dati
@@ -54,7 +54,7 @@ public interface IMovidaDB {
 	/**
 	 * Cancella tutti i dati.
 	 * 
-	 * Sarà quindi necessario caricarne altri per proseguire.
+	 * SarÔøΩ quindi necessario caricarne altri per proseguire.
 	 */
 	public void clear();
 	
@@ -76,7 +76,7 @@ public interface IMovidaDB {
 	 * Cancella il film con un dato titolo, se esiste.
 	 * 
 	 * @param title titolo del film
-	 * @return <code>true</code> se il film è stato trovato e cancellato, 
+	 * @return <code>true</code> se il film ÔøΩ stato trovato e cancellato, 
 	 * 		   <code>false</code> in caso contrario
 	 */
 	public boolean deleteMovieByTitle(String title);
