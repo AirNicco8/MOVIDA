@@ -1,4 +1,5 @@
 package src.niccolaibalica;
+
 import src.commons.*;
 
 import java.io.*;
@@ -9,14 +10,39 @@ import java.util.Scanner;
 
 public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovidaCollaborations {
     private utils db_utils;
-    private avlTree t;
-    private LinkedHashMap<String, Movie> lhm;
+    SortingAlgorithm sort;
+    MapImplementation map;
 
-    MovidaCore(){
-        this.db_utils = new utils();
-        this.lhm = new LinkedHashMap<>();
-        this.t = new avlTree();
+    public MovidaCore(){
+        this.sort = SortingAlgorithm.SelectionSort; // (???) prova
+        this.map = MapImplementation.AVL; // (???) prova
     }
+
+    /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
+
+
+    protected <V> Dizionario<V> createDizionario(Class<V> c) {
+        if (map == MapImplementation.AVL) return new avlTree<V>(c);
+        else if(map == MapImplementation.HashConcatenamento) return new hashCon<V>(c);
+        return null;
+    }
+
+    @Override
+    public boolean setSort(SortingAlgorithm a) {
+        if (a != sort) {
+            if (a == SortingAlgorithm.SelectionSort || a == SortingAlgorithm.MergeSort) {
+                sort = a;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean setMap(MapImplementation m) {
+        return false;
+    }
+
 
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DEL DB $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
@@ -113,8 +139,6 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @param name il nome della persona
      * @return record associato ad una persona
      */
-
-    /*Controllare e chiedere a di Iorio */
     public Person getPersonByName(String name){
 
     }
@@ -154,20 +178,6 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     @Override
     public Collaboration[] maximizeCollaborationsInTheTeamOf(Person actor) {
         return new Collaboration[0];
-    }
-
-
-    /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
-
-
-    @Override
-    public boolean setSort(SortingAlgorithm a) {
-        return false;
-    }
-
-    @Override
-    public boolean setMap(MapImplementation m) {
-        return false;
     }
 
 

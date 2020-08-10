@@ -1,14 +1,22 @@
 package src.niccolaibalica;
 
-import java.util.*;
+public interface dictionary<V> {
 
-    public interface dictionary<K, V>
-    {
+    public void insert(String key,V value);
 
-        void insert(K key,V value);
+    public V search(String key);
 
-        V search(K key);
+    public boolean delete(String key);
 
-        void delete(K key);
+    /**
+     * Il metodo count fornisce il numero di elementi presenti nella struttura
+     * @return Numero di elementi presenti
+     */
+    public int count();
 
-    }
+    /**
+     * Il metodo permette di ottenere da un dizionario un Array con i dati inseriti
+     * @return Array contenente i dati del dizionario ordinati secondo la loro chiave
+     */
+    public V[] toArray();
+}
