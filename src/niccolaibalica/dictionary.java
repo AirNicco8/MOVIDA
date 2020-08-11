@@ -6,7 +6,7 @@ public interface dictionary<V> {
 
     public V search(String key);
 
-    public boolean delete(String key);
+    public void delete(String key);
 
     /**
      * Il metodo count fornisce il numero di elementi presenti nella struttura
@@ -18,5 +18,5 @@ public interface dictionary<V> {
      * Il metodo permette di ottenere da un dizionario un Array con i dati inseriti
      * @return Array contenente i dati del dizionario ordinati secondo la loro chiave
      */
-    public V[] toArray();
+    //public V[] toArray();
 }

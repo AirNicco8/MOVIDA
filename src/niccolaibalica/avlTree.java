@@ -23,6 +23,10 @@ public class avlTree<V> implements dictionary<V> {
             return key;
         }
 
+        public void setKey(String k) {
+            this.key = k;
+        }
+
         public V getData() {
             return data;
         }
@@ -54,6 +58,11 @@ public class avlTree<V> implements dictionary<V> {
         public void setHeight(int h) {
             this.height = h;
         }
+
+        @Override
+        public String toString() {
+            return "" + this.getKey();
+        }
     }
 
     private avlNode root;
@@ -76,6 +85,11 @@ public class avlTree<V> implements dictionary<V> {
     public void makeEmpty()
     {
         root = null;
+    }
+
+    public int count()
+    {
+        return nNodes;
     }
     
     //ricerca, torna null se non trova elemento
@@ -110,6 +124,8 @@ public class avlTree<V> implements dictionary<V> {
         root = insert(root, k, data);
     }
 
+    // inserimento
+
     private avlNode insert(avlNode node, String k, V data) {
         if (node == null) {
             return new avlNode(data, k);
@@ -123,9 +139,116 @@ public class avlTree<V> implements dictionary<V> {
 
         node.setHeight(Math.max(getHeight(node.getLeft()), getHeight(node.getRight())) + 1);
 
-        return checkBalanceAndRotate(k, node);// (!!! non finito)
+        nNodes++;
+
+        return checkBalanceAndRotate(k, node);
     }
-    
+
+    private avlNode checkBalanceAndRotate(String key, avlNode node) {
+        int balance = getBalance(node);
+
+        // left-left
+        if ((balance > 1) && (node.getLeft().getKey().compareToIgnoreCase(key) < 0)) {
+            return rightRotation(node);
+        }
+
+        // right-right
+        if ((balance < -1) && node.getRight().getKey().compareToIgnoreCase(key) > 0) {
+            return leftRotation(node);
+        }
+
+        // left-right
+        if ((balance > 1) && (node.getLeft().getKey().compareToIgnoreCase(key) < 0)) {
+            node.setLeft(leftRotation(node.getLeft()));
+            return rightRotation(node);
+        }
+
+        // right-left
+        if ((balance < -1) && node.getRight().getKey().compareToIgnoreCase(key) > 0) {
+            node.setRight(rightRotation(node.getRight()));
+            return leftRotation(node);
+        }
+
+        return node;
+    }
+
+    // cancellazione
+
+    public void delete(String k) {
+        root = delete(root, k);
+    }
+
+    private avlNode delete(avlNode node, String key) {
+        if (node == null)
+            return node;
+
+        if (node.getKey().compareToIgnoreCase(key) < 0) { // go to the left recursively
+            node.setLeft(delete(node.getLeft(), key));
+        } else if (node.getKey().compareToIgnoreCase(key) > 0) { // go to the right recursively
+            node.setRight(delete(node.getRight(), key));
+        } else { // find node
+
+            if (node.getLeft() == null && node.getRight() == null) {
+                //remove leaf node
+                nNodes--;
+                return null;
+            }
+
+            if (node.getLeft() == null) {
+                //remove the right child
+                avlNode tempNode = node.getRight();
+                node = null;
+                nNodes--;
+                return tempNode;
+            } else if (node.getRight() == null) {
+                //remove the left child
+                avlNode tempNode = node.getLeft();
+                node = null;
+                nNodes--;
+                return tempNode;
+            }
+
+            avlNode tempNode = getPredecessor(node.getLeft());
+
+            node.setKey(tempNode.getKey());
+            node.setData(tempNode.getData());
+            node.setLeft(delete(node.getLeft(), tempNode.getKey()));
+        }
+
+        node.setHeight(Math.max(getHeight(node.getLeft()), getHeight(node.getRight())) + 1);
+
+        // have to check on every delete operation whether the tree has become
+        // unbalanced or not !!!
+        return checkBalanceAndRotate(node);
+    }
+
+    private avlNode checkBalanceAndRotate(avlNode node) {
+        int balance = getBalance(node);
+
+        // left heavy -> left-right heavy or left-left heavy
+        if (balance > 1) {
+            // if left-right: left rotation before right rotation
+            if (getBalance(node.getLeft()) < 0) {
+                node.setLeft(leftRotation(node.getLeft()));
+            }
+
+            // left-left
+            return rightRotation(node);
+        }
+
+        // right heavy -> left-right heavy or right-right heavy
+        if (balance < -1) {
+            // if right-left: right rotation before left rotation
+            if (getBalance(node.getRight()) > 0) {
+                node.setRight(rightRotation(node.getRight()));
+            }
+
+            // right-right
+            return leftRotation(node);
+        }
+
+        return node;
+    }
     
     // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ R O T A Z I O N I $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
@@ -171,6 +294,8 @@ public class avlTree<V> implements dictionary<V> {
         return leftRotation(node);
     }
 
+    // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ U T I L S $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
     private int getHeight(avlNode node) {
 
         if (node == null) {
@@ -179,4 +304,42 @@ public class avlTree<V> implements dictionary<V> {
 
         return node.getHeight();
     }
+
+    private avlNode getPredecessor(avlNode node) {
+
+        avlNode predecessor = node;
+
+        while (predecessor.getRight() != null)
+            predecessor = predecessor.getRight();
+
+        return predecessor;
+    }
+
+    private int getBalance(avlNode node) {
+        if (node == null) {
+            return 0;
+        }
+        return getHeight(node.getLeft()) - getHeight(node.getRight());
+    }
+
+    // TEST
+
+    public void traverse() {
+        if (root == null)
+            return;
+
+        System.out.println("traverse from node [" + root.getData() + "]");
+        inOrderTraversal(root);
+    }
+
+    private void inOrderTraversal(avlNode node) {
+        if (node.getLeft() != null)
+            inOrderTraversal(node.getLeft());
+
+        System.out.println(node);
+
+        if (node.getRight() != null)
+            inOrderTraversal(node.getRight());
+    }
+
 }
