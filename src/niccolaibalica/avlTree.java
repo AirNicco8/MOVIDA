@@ -4,7 +4,7 @@ import java.lang.Math;
 
 public class avlTree<V> implements dictionary<V> {
 
-    private class avlNode {
+    private class avlNode<V> {
         avlNode left, right;
         V data;
         String key;
@@ -91,14 +91,14 @@ public class avlTree<V> implements dictionary<V> {
     {
         return nNodes;
     }
-    
+
     //ricerca, torna null se non trova elemento
 
     public V search(String searchKey)
     {
-        return search(searchKey, root).getData();
+        return ((avlNode<V>)search(searchKey, root)).getData();
     }
-    
+
     private avlNode search(String searchKey, avlNode r)
     {
         avlNode found = null;
@@ -249,7 +249,7 @@ public class avlTree<V> implements dictionary<V> {
 
         return node;
     }
-    
+
     // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ R O T A Z I O N I $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
     avlNode rightRotation(avlNode node) { // input C
@@ -290,7 +290,7 @@ public class avlTree<V> implements dictionary<V> {
         // rightRotation(C) -> result B, then set B as right node of A
         node.setRight(rightRotation(node.getRight()));
 
-        // leftRotation(A)  
+        // leftRotation(A)
         return leftRotation(node);
     }
 
@@ -328,7 +328,7 @@ public class avlTree<V> implements dictionary<V> {
         if (root == null)
             return;
 
-        System.out.println("traverse from node [" + root.getData() + "]");
+        System.out.println("traverse from node [" + root.getKey() + "]");
         inOrderTraversal(root);
     }
 
@@ -341,5 +341,21 @@ public class avlTree<V> implements dictionary<V> {
         if (node.getRight() != null)
             inOrderTraversal(node.getRight());
     }
+
+    public void printTree(){
+        printTree(root);
+    }
+
+    private void printTree(avlNode t){
+    if(t != null){
+        System.out.print("(");
+        printTree(t.left);
+        System.out.print(")");
+        System.out.print(t.getKey() + " ");
+        System.out.print("(");
+        printTree(t.right);
+        System.out.print(")");
+    }
+}
 
 }
