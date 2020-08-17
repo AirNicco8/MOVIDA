@@ -96,10 +96,10 @@ public class AvlTree<V> implements dictionary<V> {
 
     public V search(String searchKey) throws ExceptionKeyNotFound
     {
-        if(!return((avlNode<V>)search(searchKey, root))).getData()) throw new ExceptionKeyNotFound();
+        if(!return((AvlNode<V>)search(searchKey, root))).getData()) throw new ExceptionKeyNotFound();
     }
 
-    private avlNode search(String searchKey, avlNode r) throws ExceptionKeyNotFound
+    private AvlNode search(String searchKey, AvlNode r) throws ExceptionKeyNotFound
     {
         AvlNode found = null;
 
@@ -178,7 +178,7 @@ public class AvlTree<V> implements dictionary<V> {
         root = delete(root, k);
     }
 
-    private avlNode delete(avlNode node, String key) throws ExceptionKeyNotFound {
+    private AvlNode delete(AvlNode node, String key) throws ExceptionKeyNotFound {
         if (node == null)
             throw new ExceptionKeyNotFound();//return node;
 
@@ -346,7 +346,7 @@ public class AvlTree<V> implements dictionary<V> {
         printTree(root);
     }
 
-    private void printTree(avlNode t){
+    private void printTree(AvlNode t){
         if(t != null){
             System.out.print("(");
             printTree(t.left);
@@ -364,12 +364,12 @@ public class AvlTree<V> implements dictionary<V> {
         V[] arr = new V[count()];
         int a = 0;
 
-        avlNode u = root;
+        AvlNode u = root;
         inOrderArr(u, a, arr);
         return arr;
     }
 
-    private void inOrderArr(avlNode node, int i, V[] a) {
+    private void inOrderArr(AvlNode node, int i, V[] a) {
         if (u.getLeft() != null)
             inOrderArr(u.getLeft());
 
