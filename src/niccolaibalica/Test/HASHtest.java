@@ -1,4 +1,4 @@
-package src.niccolaibalica;
+package src.niccolaibalica.Test;
 
 import java.util.Scanner;
 

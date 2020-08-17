@@ -1,4 +1,4 @@
-package src.niccolaibalica;
+package src.niccolaibalica.Dict;
 
 import java.lang.Math;
 
