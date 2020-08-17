@@ -219,5 +219,3 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         return new Person[0];
     }
 }
-
-}

@@ -2,9 +2,9 @@ package src.niccolaibalica.Sort;
 
 import src.commons.Movie;
 
-public class comparators{
+public class Comparators{
 
-  protected class titleComparator implements Comparator<Movie> {
+  protected class TitleComparator implements Comparator<Movie> {
 
 		@Override
 		public int compare(Movie o1, Movie o2) {
@@ -14,7 +14,7 @@ public class comparators{
 	}
 
 
-	protected class votedComparator implements Comparator<Movie> {
+	protected class VotedComparator implements Comparator<Movie> {
 
 		@Override
 		public int compare(Movie o1, Movie o2) {
@@ -24,7 +24,7 @@ public class comparators{
 	}
 
 
-	protected class recentComparator implements Comparator<Movie> {
+	protected class RecentComparator implements Comparator<Movie> {
 		@Override
 		public int compare(Movie o1, Movie o2) {
 			return o1.getYear().compareTo(o2.getYear());
@@ -33,7 +33,7 @@ public class comparators{
 
 
 
-	private static final<V> void  swap (V array[], int i, int j) {
+	private static final<V> void swap (V array[], int i, int j) {
 		V temp = array[i];
 		array[i] = array[j];
 		array[j] = temp;

@@ -2,16 +2,16 @@ package src.niccolaibalica.Dict;
 
 import java.lang.Math;
 
-public class avlTree<V> implements dictionary<V> {
+public class AvlTree<V> implements dictionary<V> {
 
-    private class avlNode<V> {
-        avlNode left, right;
+    private class AvlNode<V> {
+        AvlNode left, right;
         V data;
         String key;
         int height;
 
         /* Constructor */
-        protected avlNode(V value, String k) {
+        protected AvlNode(V value, String k) {
             left = null;
             right = null;
             data = value;
@@ -35,19 +35,19 @@ public class avlTree<V> implements dictionary<V> {
             this.data = data;
         }
 
-        public avlNode getLeft() {
+        public AvlNode getLeft() {
             return left;
         }
 
-        public void setLeft(avlNode left) {
+        public void setLeft(AvlNode left) {
             this.left = left;
         }
 
-        public avlNode getRight() {
+        public AvlNode getRight() {
             return right;
         }
 
-        public void setRight(avlNode right) {
+        public void setRight(AvlNode right) {
             this.right = right;
         }
 
@@ -65,12 +65,12 @@ public class avlTree<V> implements dictionary<V> {
         }
     }
 
-    private avlNode root;
+    private AvlNode root;
     private int nNodes;
     final Class<V> param;
 
     /* Constructor */
-    public avlTree(Class<V> p)
+    public AvlTree(Class<V> p)
     {
         root = null;
         nNodes = 0;
@@ -96,12 +96,12 @@ public class avlTree<V> implements dictionary<V> {
 
     public V search(String searchKey)
     {
-        return ((avlNode<V>)search(searchKey, root)).getData();
+        return ((AvlNode<V>)search(searchKey, root)).getData();
     }
 
-    private avlNode search(String searchKey, avlNode r)
+    private AvlNode search(String searchKey, AvlNode r)
     {
-        avlNode found = null;
+        AvlNode found = null;
 
         while (r != null)
         {
@@ -126,9 +126,9 @@ public class avlTree<V> implements dictionary<V> {
 
     // inserimento
 
-    private avlNode insert(avlNode node, String k, V data) {
+    private AvlNode insert(AvlNode node, String k, V data) {
         if (node == null) {
-            return new avlNode(data, k);
+            return new AvlNode(data, k);
         }
 
         if (node.getKey().compareToIgnoreCase(k) < 0) {
@@ -144,7 +144,7 @@ public class avlTree<V> implements dictionary<V> {
         return checkBalanceAndRotate(k, node);
     }
 
-    private avlNode checkBalanceAndRotate(String key, avlNode node) {
+    private AvlNode checkBalanceAndRotate(String key, AvlNode node) {
         int balance = getBalance(node);
 
         // left-left
@@ -178,7 +178,7 @@ public class avlTree<V> implements dictionary<V> {
         root = delete(root, k);
     }
 
-    private avlNode delete(avlNode node, String key) {
+    private AvlNode delete(AvlNode node, String key) {
         if (node == null)
             return node;
 
@@ -196,19 +196,19 @@ public class avlTree<V> implements dictionary<V> {
 
             if (node.getLeft() == null) {
                 //remove the right child
-                avlNode tempNode = node.getRight();
+                AvlNode tempNode = node.getRight();
                 node = null;
                 nNodes--;
                 return tempNode;
             } else if (node.getRight() == null) {
                 //remove the left child
-                avlNode tempNode = node.getLeft();
+                AvlNode tempNode = node.getLeft();
                 node = null;
                 nNodes--;
                 return tempNode;
             }
 
-            avlNode tempNode = getPredecessor(node.getLeft());
+            AvlNode tempNode = getPredecessor(node.getLeft());
 
             node.setKey(tempNode.getKey());
             node.setData(tempNode.getData());
@@ -222,7 +222,7 @@ public class avlTree<V> implements dictionary<V> {
         return checkBalanceAndRotate(node);
     }
 
-    private avlNode checkBalanceAndRotate(avlNode node) {
+    private AvlNode checkBalanceAndRotate(AvlNode node) {
         int balance = getBalance(node);
 
         // left heavy -> left-right heavy or left-left heavy
@@ -252,9 +252,9 @@ public class avlTree<V> implements dictionary<V> {
 
     // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ R O T A Z I O N I $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-    avlNode rightRotation(avlNode node) { // input C
-        avlNode newParentNode = node.getLeft(); // newParentNode = B
-        avlNode mid = newParentNode.getRight(); // store B's right node 'mid' (B < mid < C)
+    AvlNode rightRotation(AvlNode node) { // input C
+        AvlNode newParentNode = node.getLeft(); // newParentNode = B
+        AvlNode mid = newParentNode.getRight(); // store B's right node 'mid' (B < mid < C)
 
         newParentNode.setRight(node); // C now becomes right node of B
         node.setLeft(mid); // 'mid' now becomes left node of C
@@ -265,9 +265,9 @@ public class avlTree<V> implements dictionary<V> {
         return newParentNode; // return B as the parent of A and C
     }
 
-    avlNode leftRotation(avlNode node) { // input A
-        avlNode newParentNode = node.getRight(); // newParentNode = B
-        avlNode mid = newParentNode.getLeft(); // store B's left node 'mid' (A < mid < B)
+    AvlNode leftRotation(AvlNode node) { // input A
+        AvlNode newParentNode = node.getRight(); // newParentNode = B
+        AvlNode mid = newParentNode.getLeft(); // store B's left node 'mid' (A < mid < B)
 
         newParentNode.setLeft(node); // A now becomes left node of B
         node.setRight(mid); // 'mid' now becomes right node of A
@@ -278,7 +278,7 @@ public class avlTree<V> implements dictionary<V> {
         return newParentNode; // return B as the parent of A and C
     }
 
-    avlNode leftRightRotation(avlNode node) { // input C
+    AvlNode leftRightRotation(AvlNode node) { // input C
         // leftRotation(A) -> result B, then set B as left node of C
         node.setLeft(leftRotation(node.getLeft()));
 
@@ -286,7 +286,7 @@ public class avlTree<V> implements dictionary<V> {
         return rightRotation(node);
     }
 
-    avlNode rightLeftRotation(avlNode node) { // input A
+    AvlNode rightLeftRotation(AvlNode node) { // input A
         // rightRotation(C) -> result B, then set B as right node of A
         node.setRight(rightRotation(node.getRight()));
 
@@ -296,7 +296,7 @@ public class avlTree<V> implements dictionary<V> {
 
     // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ U T I L S $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-    private int getHeight(avlNode node) {
+    private int getHeight(AvlNode node) {
 
         if (node == null) {
             return -1;
@@ -305,9 +305,9 @@ public class avlTree<V> implements dictionary<V> {
         return node.getHeight();
     }
 
-    private avlNode getPredecessor(avlNode node) {
+    private AvlNode getPredecessor(AvlNode node) {
 
-        avlNode predecessor = node;
+        AvlNode predecessor = node;
 
         while (predecessor.getRight() != null)
             predecessor = predecessor.getRight();
@@ -315,7 +315,7 @@ public class avlTree<V> implements dictionary<V> {
         return predecessor;
     }
 
-    private int getBalance(avlNode node) {
+    private int getBalance(AvlNode node) {
         if (node == null) {
             return 0;
         }
@@ -332,7 +332,7 @@ public class avlTree<V> implements dictionary<V> {
         inOrderTraversal(root);
     }
 
-    private void inOrderTraversal(avlNode node) {
+    private void inOrderTraversal(AvlNode node) {
         if (node.getLeft() != null)
             inOrderTraversal(node.getLeft());
 
@@ -346,7 +346,7 @@ public class avlTree<V> implements dictionary<V> {
         printTree(root);
     }
 
-    private void printTree(avlNode t){
+    private void printTree(AvlNode t){
     if(t != null){
         System.out.print("(");
         printTree(t.left);

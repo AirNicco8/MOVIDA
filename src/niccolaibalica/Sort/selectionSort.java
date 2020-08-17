@@ -1,6 +1,6 @@
 package src.niccolaibalica.Sort;
 
-public class selectionSort {
+public class SelectionSort {
 
   public static<V> void sort(V[] arr, Comparator<V> c){
         for (int i = 0; i < arr.length - 1; i++)

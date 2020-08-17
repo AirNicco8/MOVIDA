@@ -1,6 +1,6 @@
 package src.niccolaibalica.Sort;
 
-public class mergeSort {
+public class MergeSort {
 
   public static<V> void merge(V[] a, V[] l, V[] r, int left, int right, Comparator<V> c) {
       int i = 0, j = 0, k = 0;

@@ -1,27 +1,9 @@
 package src.niccolaibalica.Test;
 
 import java.util.Scanner;
+import src.niccolaibalica.utils;
 
 public class HASHtest {
-
-    public static class Movie {
-
-        private String title;
-        private Integer year;
-
-        public Movie(String title, Integer year) {
-            this.title = title;
-            this.year = year;
-        }
-
-        public String getTitle(){
-          return title;
-        }
-
-        public String printtg() {
-          return(title + "!" + year.toString());
-        }
-    }
 
     public static void main(String[] args) {
 
@@ -39,7 +21,7 @@ public class HASHtest {
         System.out.println("Hash Table Test\n\n");
         System.out.println("Enter size");
         /* Make object of HashTable */
-        hashCon ht = new hashCon(scan.nextInt() );
+        HashCon ht = new HashCon(scan.nextInt() );
 
         ht.insert(a.getTitle(), a);
         ht.insert(b.getTitle(), b);
@@ -65,7 +47,7 @@ public class HASHtest {
                 break;
             case 3 :
                 System.out.println("Enter key");
-                System.out.println("Value = "+ ((Movie)ht.search( scan.next() )).printtg());
+                System.out.println("Value = "+ printtg((Movie)ht.search(scan.next())));
                 break;
             case 4 :
                 ht.makeEmpty();

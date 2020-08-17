@@ -1,26 +1,8 @@
 package src.niccolaibalica.Test;
 
+import src.niccolaibalica.utils;
 
 public class AVLtest {
-
-    public static class Movie {
-
-        private String title;
-        private Integer year;
-
-        public Movie(String title, Integer year) {
-            this.title = title;
-            this.year = year;
-        }
-
-        public String getTitle(){
-          return title;
-        }
-
-        public void printtg() {
-          System.out.println(title + "!" + year.toString());
-        }
-    }
 
     public static void main(String[] args) {
 
@@ -33,7 +15,7 @@ public class AVLtest {
 
         d = new Movie("Errand", 3444);
 
-        avlTree avl = new avlTree(Movie.class);
+        AvlTree avl = new AvlTree(Movie.class);
 
 
         avl.insert(a.getTitle(), a);
@@ -46,6 +28,6 @@ public class AVLtest {
         System.out.println("ricerca");
 
         Movie u = (Movie)avl.search("Allah");
-        u.printtg();
+        printtg(u);
     }
 }

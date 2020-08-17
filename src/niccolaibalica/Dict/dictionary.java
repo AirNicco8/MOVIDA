@@ -1,6 +1,6 @@
 package src.niccolaibalica.Dict;
 
-public interface dictionary<V> {
+public interface Dictionary<V> {
 
     public void insert(String key,V value);
 

@@ -11,4 +11,8 @@ import java.util.Scanner;
 
 public class utils {
 
+    public String printtg(Movie m) {
+      return (m.getTitle() + "!" + m.getYear().toString());
+    }
+
 }

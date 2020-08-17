@@ -1,14 +1,14 @@
 package src.niccolaibalica.Dict;
 
-public class hashCon<V> implements dictionary<V> {
+public class HashCon<V> implements dictionary<V> {
 
-  class conHashEntry<V>{
-      conHashEntry next;
+  class ConHashEntry<V>{
+      ConHashEntry next;
       String key;
       V data;
 
       /* Constructor */
-      conHashEntry(String key, V data)
+      ConHashEntry(String key, V data)
       {
           this.key = key;
           this.data = data;
@@ -22,7 +22,7 @@ public class hashCon<V> implements dictionary<V> {
   private conHashEntry[] table;
 
   /* Constructor */
-  public hashCon(int ts) {
+  public HashCon(int ts) {
         size = 0;
         TABLE_SIZE = ts;
         table = new conHashEntry[TABLE_SIZE];
