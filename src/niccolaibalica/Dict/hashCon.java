@@ -128,4 +128,26 @@ public class HashCon<V> implements dictionary<V> {
         }
         size++;
    }
+
+   //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ A R R A Y $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+   public V[] toArray(){ //(!!) da testare
+     V[] arr = new V[getSize()];
+     int k = 0;
+
+     for (int i = 0; i < TABLE_SIZE; i++)
+     {
+         conHashEntry entry = table[i];
+         while (entry != null)
+         {
+             arr[k] = (V)entry.getData();
+             entry = entry.next;
+             k++;
+         }
+     }
+
+     return arr;
+   }
+
+
 }
