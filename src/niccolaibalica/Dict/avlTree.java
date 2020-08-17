@@ -94,12 +94,12 @@ public class avlTree<V> implements dictionary<V> {
 
     //ricerca, torna null se non trova elemento
 
-    public V search(String searchKey)
+    public V search(String searchKey) throws ExceptionKeyNotFound
     {
-        return ((avlNode<V>)search(searchKey, root)).getData();
+        if(!return((avlNode<V>)search(searchKey, root))).getData()) throw new ExceptionKeyNotFound();
     }
 
-    private avlNode search(String searchKey, avlNode r)
+    private avlNode search(String searchKey, avlNode r) throws ExceptionKeyNotFound
     {
         avlNode found = null;
 
@@ -174,13 +174,13 @@ public class avlTree<V> implements dictionary<V> {
 
     // cancellazione
 
-    public void delete(String k) {
+    public void delete(String k) throws ExceptionKeyNotFound{
         root = delete(root, k);
     }
 
-    private avlNode delete(avlNode node, String key) {
+    private avlNode delete(avlNode node, String key) throws ExceptionKeyNotFound {
         if (node == null)
-            return node;
+            throw new ExceptionKeyNotFound();//return node;
 
         if (node.getKey().compareToIgnoreCase(key) < 0) { // go to the left recursively
             node.setLeft(delete(node.getLeft(), key));
@@ -347,15 +347,37 @@ public class avlTree<V> implements dictionary<V> {
     }
 
     private void printTree(avlNode t){
-    if(t != null){
-        System.out.print("(");
-        printTree(t.left);
-        System.out.print(")");
-        System.out.print(t.getKey() + " ");
-        System.out.print("(");
-        printTree(t.right);
-        System.out.print(")");
+        if(t != null){
+            System.out.print("(");
+            printTree(t.left);
+            System.out.print(")");
+            System.out.print(t.getKey() + " ");
+            System.out.print("(");
+            printTree(t.right);
+            System.out.print(")");
+        }
     }
-}
+
+//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ A R R A Y $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+    public V[] toArray(){ //(!!) da testare
+        V[] arr = new V[count()];
+        int a = 0;
+
+        avlNode u = root;
+        inOrderArr(u, a, arr);
+        return arr;
+    }
+
+    private void inOrderArr(avlNode node, int i, V[] a) {
+        if (u.getLeft() != null)
+            inOrderArr(u.getLeft());
+
+        a[i] =(V) u.getData();
+        i++;
+
+        if (u.getRight() != null)
+            inOrderArr(u.getRight());
+    }
 
 }
