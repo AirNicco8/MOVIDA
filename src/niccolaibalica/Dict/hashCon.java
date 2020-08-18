@@ -19,13 +19,13 @@ public class HashCon<V> implements Dictionary<V> {
 
   private int TABLE_SIZE;
   private int size;
-  private conHashEntry[] table;
+  private ConHashEntry[] table;
 
   /* Constructor */
   public HashCon(int ts) {
         size = 0;
         TABLE_SIZE = ts;
-        table = new conHashEntry[TABLE_SIZE];
+        table = new ConHashEntry[TABLE_SIZE];
         for (int i = 0; i < TABLE_SIZE; i++)
             table[i] = null;
   }

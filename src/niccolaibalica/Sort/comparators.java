@@ -4,29 +4,31 @@ import src.commons.Movie;
 
 import java.util.Comparator;
 
+public class Comparators implements Comparator<Movie> {
 
-public class TitleSorter implements Comparator<Movie> {
+    class TitleSorter {
 
-	@Override
-	public int compare(Movie o1, Movie o2) {
-		return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-	}
+    	@Override
+    	public int compare(Movie o1, Movie o2) {
+    		return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+    	}
 
-}
+    }
 
-public class RatingSorter implements Comparator<Movie> {
+    class RatingSorter {
 
-	@Override
-	public int compare(Movie o1, Movie o2) {
-		return o1.getVotes() - o2.getVotes();
-	}
+    	@Override
+    	public int compare(Movie o1, Movie o2) {
+    		return o1.getVotes() - o2.getVotes();
+    	}
 
-}
+    }
 
-public class AgeSorter implements Comparator<Movie> {
+    class AgeSorter {
 
-	@Override
-	public int compare(Movie o1, Movie o2) {
-		return o1.getYear().compareTo(o2.getYear());
-	}
+    	@Override
+    	public int compare(Movie o1, Movie o2) {
+    		return o1.getYear().compareTo(o2.getYear());
+    	}
+    }
 }

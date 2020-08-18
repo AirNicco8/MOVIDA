@@ -61,10 +61,4 @@ public class Movie implements Comparable<Movie> {
 		return this.director;
 	}
 
-	public int compareTo(Employee o) {
-		if (o == null)
-			return -1;
-		//TODO capire come riempirlo
-	}
-
 }

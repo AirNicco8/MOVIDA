@@ -97,7 +97,7 @@ public class AvlTree<V> implements Dictionary<V> {
     public V search(String searchKey) throws ExceptionKeyNotFound
     {
         //TODO ERROR
-        if(!return((AvlNode<V>)search(searchKey, root))).getData()) throw new ExceptionKeyNotFound();
+        if(search(searchKey, root).getData() == null) throw new ExceptionKeyNotFound();
     }
 
     private AvlNode search(String searchKey, AvlNode r) throws ExceptionKeyNotFound

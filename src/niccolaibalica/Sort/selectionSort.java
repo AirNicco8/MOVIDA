@@ -1,8 +1,10 @@
 package src.niccolaibalica.sort;
 
-public class SelectionSort {
+import src.niccolaibalica.sort.Comparators;
 
-  public static<V> void sort(V[] arr, Comparator<V> c){
+public class SelectionSort<V> {
+
+  public static<V> void sort(V[] arr, Comparators<V> c){
         for (int i = 0; i < arr.length - 1; i++) {
             int index = i;
             for (int j = i + 1; j < arr.length; j++){
