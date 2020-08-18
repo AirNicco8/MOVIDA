@@ -1,10 +1,9 @@
-package src.niccolaibalica.Sort;
+package src.niccolaibalica.sort;
 
 public class SelectionSort {
 
   public static<V> void sort(V[] arr, Comparator<V> c){
-        for (int i = 0; i < arr.length - 1; i++)
-        {
+        for (int i = 0; i < arr.length - 1; i++) {
             int index = i;
             for (int j = i + 1; j < arr.length; j++){
                 if (c.compare(arr[j], arr[index]) < 0){ // (!!) testare come operano i comparators

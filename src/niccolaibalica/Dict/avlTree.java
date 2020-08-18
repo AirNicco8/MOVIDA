@@ -1,8 +1,8 @@
-package src.niccolaibalica.Dict;
+package src.niccolaibalica.dict;
 
 import java.lang.Math;
 
-public class AvlTree<V> implements dictionary<V> {
+public class AvlTree<V> implements Dictionary<V> {
 
     private class AvlNode<V> {
         AvlNode left, right;
@@ -96,6 +96,7 @@ public class AvlTree<V> implements dictionary<V> {
 
     public V search(String searchKey) throws ExceptionKeyNotFound
     {
+        //TODO ERROR
         if(!return((AvlNode<V>)search(searchKey, root))).getData()) throw new ExceptionKeyNotFound();
     }
 

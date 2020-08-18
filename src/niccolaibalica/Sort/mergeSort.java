@@ -1,26 +1,27 @@
-package src.niccolaibalica.Sort;
+package src.niccolaibalica.sort;
 
 public class MergeSort {
-
-  public static<V> void merge(V[] a, V[] l, V[] r, int left, int right, Comparator<V> c) {
-      int i = 0, j = 0, k = 0;
-      while (i < left && j < right) {
-          if (c.compare(l[i], r[j]) <= 0) { // (!!) testare come operano i comparators
-              a[k++] = l[i++];
-          }
-          else {
-              a[k++] = r[j++];
-          }
-      }
-      while (i < left) {
-          a[k++] = l[i++];
-      }
-      while (j < right) {
-          a[k++] = r[j++];
-      }
+    //TODO quale Comparator usare qui? Dobbiamo poter scegliere?
+    //TODO c'e' bisogno di tipizzare?
+    public void merge(V[] a, V[] l, V[] r, int left, int right, Comparator<V> c) {
+        int i = 0, j = 0, k = 0;
+        while (i < left && j < right) {
+            if (c.compare(l[i], r[j])) { //TODO testare come operano i comparators
+                a[k++] = r[j++];
+            }
+            else {
+                a[k++] = l[i++];
+            }
+        }
+        while (i < left) {
+            a[k++] = l[i++];
+        }
+        while (j < right) {
+            a[k++] = r[j++];
+        }
   }
 
-  public static<V> void sort(V[] a, int n, Comparator<V> c) {
+  public void sort(V[] a, int n, Comparator<V> c) {
       if (n < 2) {
           return;
       }

@@ -15,4 +15,9 @@ public class utils {
       return (m.getTitle() + "!" + m.getYear().toString());
     }
 
+    public void swap(V[] array, int i, int j) {
+    	V temp = array[i];
+    	array[i] = array[j];
+    	array[j] = temp;
+    }
 }

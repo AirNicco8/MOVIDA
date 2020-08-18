@@ -19,7 +19,7 @@ package src.commons;
  * per recupare le informazioni caratterizzanti di un film.
  *
  */
-public class Movie {
+public class Movie implements Comparable<Movie> {
 
 	private String title;
 	private Integer year;
@@ -61,5 +61,10 @@ public class Movie {
 		return this.director;
 	}
 
+	public int compareTo(Employee o) {
+		if (o == null)
+			return -1;
+		//TODO capire come riempirlo
+	}
 
 }

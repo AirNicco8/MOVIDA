@@ -1,42 +1,32 @@
-package src.niccolaibalica.Sort;
+package src.niccolaibalica.sort;
 
 import src.commons.Movie;
 
-public class Comparators{
+import java.util.Comparator;
 
-  protected class TitleComparator implements Comparator<Movie> {
 
-		@Override
-		public int compare(Movie o1, Movie o2) {
-			return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-		}
+public class TitleSorter implements Comparator<Movie> {
 
+	@Override
+	public int compare(Movie o1, Movie o2) {
+		return o1.getTitle().compareToIgnoreCase(o2.getTitle());
 	}
 
+}
 
-	protected class VotedComparator implements Comparator<Movie> {
+public class RatingSorter implements Comparator<Movie> {
 
-		@Override
-		public int compare(Movie o1, Movie o2) {
-			return o1.getVotes() - o2.getVotes();
-		}
-
+	@Override
+	public int compare(Movie o1, Movie o2) {
+		return o1.getVotes() - o2.getVotes();
 	}
 
+}
 
-	protected class RecentComparator implements Comparator<Movie> {
-		@Override
-		public int compare(Movie o1, Movie o2) {
-			return o1.getYear().compareTo(o2.getYear());
-		}
+public class AgeSorter implements Comparator<Movie> {
+
+	@Override
+	public int compare(Movie o1, Movie o2) {
+		return o1.getYear().compareTo(o2.getYear());
 	}
-
-
-
-	private static final<V> void swap (V array[], int i, int j) {
-		V temp = array[i];
-		array[i] = array[j];
-		array[j] = temp;
-	}
-
 }

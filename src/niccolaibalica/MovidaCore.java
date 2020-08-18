@@ -13,17 +13,20 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     SortingAlgorithm sort;
     MapImplementation map;
 
-    public MovidaCore(){
-        this.sort = SortingAlgorithm.SelectionSort; // (???) prova
-        this.map = MapImplementation.AVL; // (???) prova
+    public MovidaCore() {
+        // TODO debugging
+        this.sort = SortingAlgorithm.SelectionSort;
+        this.map = MapImplementation.AVL;
     }
 
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
 
-    protected <V> Dizionario<V> createDizionario(Class<V> c) {
-        if (map == MapImplementation.AVL) return new avlTree<V>(c);
-        else if(map == MapImplementation.HashConcatenamento) return new hashCon<V>(c);
+    protected Dictionary<V> createDizionario(Class<V> c) {
+        if (map == MapImplementation.AVL)
+            return new AvlTree<V>(c);
+        else if (map == MapImplementation.HashConcatenamento)
+            return new HashCon<V>(c);
         return null;
     }
 
@@ -65,7 +68,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @throws MovidaFileException in caso di errore di caricamento
      */
     public void loadFromFile(File f) {
-        }
+    }
 
 
 
@@ -82,7 +85,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      */
     public void saveToFile(File f){
 
-        }
+    }
 
 
 

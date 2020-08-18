@@ -1,4 +1,4 @@
-package src.niccolaibalica.Test;
+package src.niccolaibalica.test;
 
 import src.niccolaibalica.utils;
 

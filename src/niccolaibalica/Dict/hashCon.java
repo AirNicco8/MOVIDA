@@ -1,6 +1,6 @@
-package src.niccolaibalica.Dict;
+package src.niccolaibalica.dict;
 
-public class HashCon<V> implements dictionary<V> {
+public class HashCon<V> implements Dictionary<V> {
 
   class ConHashEntry<V>{
       ConHashEntry next;
