@@ -1,11 +1,13 @@
-package src.niccolaibalica.test;
+package src.niccolaibalica.Test;
 
 import src.niccolaibalica.utils;
+import src.niccolaibalica.Dict.AvlTree;
+import src.commons.Movie;
 
 public class AVLtest {
 
     public static void main(String[] args) {
-
+        utils y = new utils();
         Movie a,b,c,d;
         a = new Movie("Allah", 1998);
 
@@ -28,6 +30,6 @@ public class AVLtest {
         System.out.println("ricerca");
 
         Movie u = (Movie)avl.search("Allah");
-        printtg(u);
+        y.printtg(u);
     }
 }

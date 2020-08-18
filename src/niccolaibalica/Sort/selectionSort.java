@@ -1,10 +1,13 @@
-package src.niccolaibalica.sort;
+package src.niccolaibalica.Sort;
 
-import src.niccolaibalica.sort.Comparators;
+import java.util.Comparator;
+import src.niccolaibalica.utils;
 
-public class SelectionSort<V> {
+public class SelectionSort{
 
-  public static<V> void sort(V[] arr, Comparators<V> c){
+  utils u = new utils();
+
+  public<V> void sort(V[] arr, Comparator<V> c){
         for (int i = 0; i < arr.length - 1; i++) {
             int index = i;
             for (int j = i + 1; j < arr.length; j++){
@@ -15,7 +18,7 @@ public class SelectionSort<V> {
             /*int smallerNumber = arr[index];
             arr[index] = arr[i];
             arr[i] = smallerNumber;  */
-            swap(arr, index, i);
+            u.swap(arr, index, i);
         }
     }
 

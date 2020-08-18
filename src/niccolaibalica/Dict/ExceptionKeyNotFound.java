@@ -1,4 +1,4 @@
-package src.niccolaibalica.dict;
+package src.niccolaibalica.Dict;
 
 import src.commons.MovidaFileException;
 

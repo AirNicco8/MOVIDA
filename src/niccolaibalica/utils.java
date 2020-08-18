@@ -9,13 +9,13 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class utils {
+public class utils<V> {
 
     public String printtg(Movie m) {
       return (m.getTitle() + "!" + m.getYear().toString());
     }
 
-    public void swap(V[] array, int i, int j) {
+    public<V> void swap(V[] array, int i, int j) {
     	V temp = array[i];
     	array[i] = array[j];
     	array[j] = temp;

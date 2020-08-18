@@ -1,12 +1,12 @@
-package src.niccolaibalica.sort;
+package src.niccolaibalica.Sort;
 
 import src.commons.Movie;
 
 import java.util.Comparator;
 
-public class Comparators implements Comparator<Movie> {
+public class Comparators /*implements Comparator<Movie>*/ { // (!) Classe rimpiazzata dalle 3 *Sorter
 
-    class TitleSorter {
+    /*class TitleSorter {
 
     	@Override
     	public int compare(Movie o1, Movie o2) {
@@ -30,5 +30,5 @@ public class Comparators implements Comparator<Movie> {
     	public int compare(Movie o1, Movie o2) {
     		return o1.getYear().compareTo(o2.getYear());
     	}
-    }
+    }*/
 }

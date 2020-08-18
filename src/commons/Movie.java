@@ -19,7 +19,7 @@ package src.commons;
  * per recupare le informazioni caratterizzanti di un film.
  *
  */
-public class Movie implements Comparable<Movie> {
+public class Movie /*implements Comparable<Movie>*/ {
 
 	private String title;
 	private Integer year;

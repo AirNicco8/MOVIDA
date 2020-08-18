@@ -1,4 +1,6 @@
-package src.niccolaibalica.dict;
+package src.niccolaibalica.Dict;
+
+import java.lang.reflect.Array;
 
 public class HashCon<V> implements Dictionary<V> {
 
@@ -15,17 +17,23 @@ public class HashCon<V> implements Dictionary<V> {
           this.next = null;
       }
 
+      public V getData(){
+          return this.data;
+      }
+
   }
 
   private int TABLE_SIZE;
   private int size;
   private ConHashEntry[] table;
+  private final Class<V> param;
 
   /* Constructor */
-  public HashCon(int ts) {
+  public HashCon(int ts, Class<V> p) {
         size = 0;
         TABLE_SIZE = ts;
         table = new ConHashEntry[TABLE_SIZE];
+        this.param = p;
         for (int i = 0; i < TABLE_SIZE; i++)
             table[i] = null;
   }
@@ -55,7 +63,7 @@ public class HashCon<V> implements Dictionary<V> {
        for (int i = 0; i < TABLE_SIZE; i++)
        {
            System.out.print("\nBucket "+ (i + 1) +" : ");
-           conHashEntry entry = table[i];
+           ConHashEntry entry = table[i];
            while (entry != null)
            {
                System.out.print(entry.key +" ");
@@ -76,13 +84,13 @@ public class HashCon<V> implements Dictionary<V> {
             throw new ExceptionKeyNotFound();
         else
         {
-            conHashEntry entry = table[hash];
+            ConHashEntry entry = table[hash];
             while (entry != null && !entry.key.equals(k))
                 entry = entry.next;
             if (entry == null)
                 throw new ExceptionKeyNotFound();
             else
-                return ((conHashEntry<V>)entry).data;
+                return ((ConHashEntry<V>)entry).data;
         }
    }
 
@@ -92,8 +100,8 @@ public class HashCon<V> implements Dictionary<V> {
      int hash = (myHash(k) % TABLE_SIZE);
         if (table[hash] != null)
         {
-            conHashEntry prevEntry = null;
-            conHashEntry entry = table[hash];
+            ConHashEntry prevEntry = null;
+            ConHashEntry entry = table[hash];
             while (entry.next != null && !entry.key.equals(k))
             {
                 prevEntry = entry;
@@ -115,16 +123,16 @@ public class HashCon<V> implements Dictionary<V> {
    public void insert(String k, V val){
      int hash = (myHash(k) % TABLE_SIZE);
         if (table[hash] == null)
-            table[hash] = new conHashEntry(k, val);
+            table[hash] = new ConHashEntry(k, val);
         else
         {
-             conHashEntry entry = table[hash];
+             ConHashEntry entry = table[hash];
             while (entry.next != null && !entry.key.equals(k))
                 entry = entry.next;
             if (entry.key.equals(k))
                 entry.data = val;
             else
-                entry.next = new conHashEntry(k, val);
+                entry.next = new ConHashEntry(k, val);
         }
         size++;
    }
@@ -132,12 +140,16 @@ public class HashCon<V> implements Dictionary<V> {
    //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ A R R A Y $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
    public V[] toArray(){ //(!!) da testare
-     V[] arr = new V[getSize()];
+    int n = getSize();
+
+     V[] arr = null;
+     arr = (V[]) Array.newInstance(param, n);
+
      int k = 0;
 
      for (int i = 0; i < TABLE_SIZE; i++)
      {
-         conHashEntry entry = table[i];
+         ConHashEntry entry = table[i];
          while (entry != null)
          {
              arr[k] = (V)entry.getData();

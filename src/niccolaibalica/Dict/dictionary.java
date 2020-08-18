@@ -1,4 +1,4 @@
-package src.niccolaibalica.dict;
+package src.niccolaibalica.Dict;
 
 public interface Dictionary<V> {
 

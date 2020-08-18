@@ -1,6 +1,7 @@
-package src.niccolaibalica.dict;
+package src.niccolaibalica.Dict;
 
 import java.lang.Math;
+import java.lang.reflect.Array;
 
 public class AvlTree<V> implements Dictionary<V> {
 
@@ -67,7 +68,7 @@ public class AvlTree<V> implements Dictionary<V> {
 
     private AvlNode root;
     private int nNodes;
-    final Class<V> param;
+    private final Class<V> param;
 
     /* Constructor */
     public AvlTree(Class<V> p)
@@ -96,8 +97,11 @@ public class AvlTree<V> implements Dictionary<V> {
 
     public V search(String searchKey) throws ExceptionKeyNotFound
     {
+        V tmp = (V)search(searchKey, root).getData();
+
         //TODO ERROR
-        if(search(searchKey, root).getData() == null) throw new ExceptionKeyNotFound();
+        if(tmp == null) throw new ExceptionKeyNotFound();
+        else return tmp;
     }
 
     private AvlNode search(String searchKey, AvlNode r) throws ExceptionKeyNotFound
@@ -362,7 +366,11 @@ public class AvlTree<V> implements Dictionary<V> {
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ A R R A Y $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
     public V[] toArray(){ //(!!) da testare
-        V[] arr = new V[count()];
+        int n = count();
+
+        V[] arr = null;
+        arr = (V[]) Array.newInstance(param, n);
+
         int a = 0;
 
         AvlNode u = root;
@@ -370,15 +378,15 @@ public class AvlTree<V> implements Dictionary<V> {
         return arr;
     }
 
-    private void inOrderArr(AvlNode node, int i, V[] a) {
+    private void inOrderArr(AvlNode u, int i, V[] a) {
         if (u.getLeft() != null)
-            inOrderArr(u.getLeft());
+            inOrderArr(u.getLeft(), i , a);
 
         a[i] =(V) u.getData();
         i++;
 
         if (u.getRight() != null)
-            inOrderArr(u.getRight());
+            inOrderArr(u.getRight(), i , a);
     }
 
 }

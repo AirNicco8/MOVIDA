@@ -1,12 +1,14 @@
-package src.niccolaibalica.test;
+package src.niccolaibalica.Test;
 
 import java.util.Scanner;
 import src.niccolaibalica.utils;
+import src.niccolaibalica.Dict.HashCon;
+import src.commons.Movie;
 
 public class HASHtest {
 
     public static void main(String[] args) {
-
+        utils u = new utils();
         Movie a,b,c,d;
         a = new Movie("Allah", 1998);
 
@@ -21,7 +23,7 @@ public class HASHtest {
         System.out.println("Hash Table Test\n\n");
         System.out.println("Enter size");
         /* Make object of HashTable */
-        HashCon ht = new HashCon(scan.nextInt() );
+        HashCon ht = new HashCon(scan.nextInt(), Movie.class);
 
         ht.insert(a.getTitle(), a);
         ht.insert(b.getTitle(), b);
@@ -47,7 +49,7 @@ public class HASHtest {
                 break;
             case 3 :
                 System.out.println("Enter key");
-                System.out.println("Value = "+ printtg((Movie)ht.search(scan.next())));
+                System.out.println("Value = "+ u.printtg((Movie)ht.search(scan.next())));
                 break;
             case 4 :
                 ht.makeEmpty();
