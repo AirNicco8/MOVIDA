@@ -14,14 +14,18 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     private utils db_utils;
     SortingAlgorithm sort;
     MapImplementation map;
+    Dictionary<Movie> movies;
+    Dictionary<Person> people;
 
     public MovidaCore() {
         // TODO debugging / default values
         this.sort = SortingAlgorithm.SelectionSort;
         this.map = MapImplementation.AVL;
+        this.movies = null;
+        this.people = null;
     }
 
-    /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
+/** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
 
     protected<V> Dictionary<V> createDizionario(Class<V> c) {
@@ -45,8 +49,27 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     @Override
     public boolean setMap(MapImplementation m) {
-        return false;
-    }
+       boolean rit = false;
+       if (m != map) {
+           if (m == MapImplementation.AVL || m == MapImplementation.HashConcatenamento) {
+               map = m; // Modifichiamo il tipo di dizionario usato
+               if( movies != null && people != null){
+                   Dictionary<Person> newPeople = createDizionario(Person.class);
+                   Dictionary<Movie> newMovies = createDizionario(Movie.class);
+                   for (Movie movie : getAllMovies()) { // (!) metodo che verrà implementato nella parte db
+                       newMovies.insert(movie.getTitle(), movie);
+                   }
+                   for (Person person : getAllPeople()) {
+                       newPeople.insert(person.getName(), person);
+                   }
+                   movies = newMovies;
+                   people = newPeople;
+                   rit = true;
+               }
+           }
+       }
+       return rit;
+   }
 
 
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DEL DB $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
