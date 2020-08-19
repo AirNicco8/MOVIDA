@@ -1,6 +1,6 @@
 package src.niccolaibalica;
 
-import src.niccolaibalica.dict.Dictionary;
+import src.niccolaibalica.dict.*;
 import src.commons.*;
 
 import java.io.*;
@@ -23,11 +23,11 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
 
-    protected Dictionary<V> createDizionario(V c) {
+    protected Dictionary<Movie> createDizionario(Movie c) {
         if (map == MapImplementation.AVL)
-            return new AvlTree<V>(c);
+            return new AvlTree<Movie>(c);
         else if (map == MapImplementation.HashConcatenamento)
-            return new HashCon<V>(c);
+            return new HashCon<Movie>(42, c);   //TODO replace 42 with valid value
         return null;
     }
 
@@ -68,7 +68,34 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      *
      * @throws MovidaFileException in caso di errore di caricamento
      */
-    public void loadFromFile(File f) {
+    public void loadFromFile(File f) throws MovidaFileException {
+        try {
+            Scanner fileReader = new Scanner(f);
+            while (fileReader.hasNextLine()) {
+                String title = fileReader.nextLine().split(":")[1].trim();
+                //TODO remove prints
+                System.out.println(title);
+                String year = fileReader.nextLine().split(":")[1].trim();
+                System.out.println(year);
+                String director = fileReader.nextLine().split(":")[1].trim();
+                System.out.println(director);
+                String cast = fileReader.nextLine().split(":")[1].trim();
+                System.out.println(cast);
+                String votes = fileReader.nextLine().split(":")[1].trim();
+                System.out.println(votes);
+                if (title.isEmpty() || year.isEmpty() || director.isEmpty() || cast.isEmpty() || votes.isEmpty())
+                    throw new MovidaFileException();
+                //TODO create tokenizer, read method probably also needs data structure where to save data
+                // read returns 1 if it finds error
+                /*
+                if (tokenizer.read(title, year, director, cast, votes))
+                    throw new MovidaFileException();
+                */
+            }
+            fileReader.close();
+        } catch (FileNotFoundException e) {
+            throw new MovidaFileException();
+        }
     }
 
 
@@ -84,7 +111,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      *
      * @throws MovidaFileException in caso di errore di salvataggio
      */
-    public void saveToFile(File f){
+    public void saveToFile(File f) throws MovidaFileException {
 
     }
 
@@ -96,7 +123,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      *
      * Sar� quindi necessario caricarne altri per proseguire.
      */
-    public void clear(){
+    public void clear() {
     }
 
     /**
@@ -104,7 +131,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      *
      * @return numero di film totali
      */
-    public int countMovies(){
+    public int countMovies() {
+        return 0;
     }
 
     /**
@@ -112,8 +140,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      *
      * @return numero di persone totali
      */
-    public int countPeople(){
-
+    public int countPeople() {
+        return 0;
     }
 
     /**
@@ -123,8 +151,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return <code>true</code> se il film � stato trovato e cancellato,
      * 		   <code>false</code> in caso contrario
      */
-    public boolean deleteMovieByTitle(String title){
-
+    public boolean deleteMovieByTitle(String title) {
+        return false;
     }
 
     /**
@@ -133,8 +161,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @param title il titolo del film
      * @return record associato ad un film
      */
-    public Movie getMovieByTitle(String title){
-
+    public Movie getMovieByTitle(String title) {
+        return null;
     }
 
     /**
@@ -143,8 +171,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @param name il nome della persona
      * @return record associato ad una persona
      */
-    public Person getPersonByName(String name){
-
+    public Person getPersonByName(String name) {
+        return null;
     }
 
 
@@ -153,8 +181,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      *
      * @return array di film
      */
-    public Movie[] getAllMovies(){
-
+    public Movie[] getAllMovies() {
+        return null;
     }
 
     /**
@@ -162,7 +190,9 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      *
      * @return array di persone
      */
-    public Person[] getAllPeople();
+    public Person[] getAllPeople() {
+        return null;
+    }
 
 
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLE COLLAB $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
@@ -171,17 +201,20 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     @Override
     public Person[] getDirectCollaboratorsOf(Person actor) {
-        return new Person[0];
+        return null;
+        //return new Person[0];
     }
 
     @Override
     public Person[] getTeamOf(Person actor) {
-        return new Person[0];
+        return null;
+        //return new Person[0];
     }
 
     @Override
     public Collaboration[] maximizeCollaborationsInTheTeamOf(Person actor) {
-        return new Collaboration[0];
+        return null;
+        //return new Collaboration[0];
     }
 
 
@@ -190,36 +223,43 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     @Override
     public Movie[] searchMoviesByTitle(String title) {
-        return new Movie[0];
+        return null;
+        //return new Movie[0];
     }
 
     @Override
     public Movie[] searchMoviesInYear(Integer year) {
-        return new Movie[0];
+        return null;
+        //return new Movie[0];
     }
 
     @Override
     public Movie[] searchMoviesDirectedBy(String name) {
-        return new Movie[0];
+        return null;
+        //return new Movie[0];
     }
 
     @Override
     public Movie[] searchMoviesStarredBy(String name) {
-        return new Movie[0];
+        return null;
+        //return new Movie[0];
     }
 
     @Override
     public Movie[] searchMostVotedMovies(Integer N) {
-        return new Movie[0];
+        return null;
+        //return new Movie[0];
     }
 
     @Override
     public Movie[] searchMostRecentMovies(Integer N) {
-        return new Movie[0];
+        return null;
+        //return new Movie[0];
     }
 
     @Override
     public Person[] searchMostActiveActors(Integer N) {
-        return new Person[0];
+        return null;
+        //return new Person[0];
     }
 }
