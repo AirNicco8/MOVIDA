@@ -1,6 +1,7 @@
 package src.niccolaibalica;
 
 import src.niccolaibalica.dict.*;
+import src.niccolaibalica.sort.*;
 import src.commons.*;
 
 import java.io.*;
@@ -23,11 +24,11 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
 
-    protected Dictionary<Movie> createDizionario(Movie c) {
+    protected<V> Dictionary<V> createDizionario(Class<V> c) {
         if (map == MapImplementation.AVL)
-            return new AvlTree<Movie>(c);
+            return new AvlTree<V>(c);
         else if (map == MapImplementation.HashConcatenamento)
-            return new HashCon<Movie>(42, c);   //TODO replace 42 with valid value
+            return new HashCon<V>(42, c);   //TODO replace 42 with valid value
         return null;
     }
 

@@ -68,10 +68,10 @@ public class AvlTree<V> implements Dictionary<V> {
 
     private AvlNode root;
     private int nNodes;
-    private final V param;
+    final Class<V> param;
 
     /* Constructor */
-    public AvlTree(V p)
+    public AvlTree(Class<V> p)
     {
         root = null;
         nNodes = 0;
