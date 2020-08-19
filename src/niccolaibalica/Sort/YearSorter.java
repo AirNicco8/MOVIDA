@@ -1,4 +1,4 @@
-package src.niccolaibalica.Sort;
+package src.niccolaibalica.sort;
 
 import src.commons.Movie;
 

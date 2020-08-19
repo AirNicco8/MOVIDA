@@ -1,5 +1,6 @@
 package src.niccolaibalica;
 
+import src.niccolaibalica.dict.Dictionary;
 import src.commons.*;
 
 import java.io.*;
@@ -14,7 +15,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     MapImplementation map;
 
     public MovidaCore() {
-        // TODO debugging
+        // TODO debugging / default values
         this.sort = SortingAlgorithm.SelectionSort;
         this.map = MapImplementation.AVL;
     }
@@ -22,7 +23,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
 
-    protected Dictionary<V> createDizionario(Class<V> c) {
+    protected Dictionary<V> createDizionario(V c) {
         if (map == MapImplementation.AVL)
             return new AvlTree<V>(c);
         else if (map == MapImplementation.HashConcatenamento)

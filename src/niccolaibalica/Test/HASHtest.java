@@ -1,8 +1,8 @@
-package src.niccolaibalica.Test;
+package src.niccolaibalica.test;
 
 import java.util.Scanner;
 import src.niccolaibalica.utils;
-import src.niccolaibalica.Dict.HashCon;
+import src.niccolaibalica.dict.HashCon;
 import src.commons.Movie;
 
 public class HASHtest {

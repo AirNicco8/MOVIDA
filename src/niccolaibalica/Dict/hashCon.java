@@ -1,4 +1,4 @@
-package src.niccolaibalica.Dict;
+package src.niccolaibalica.dict;
 
 import java.lang.reflect.Array;
 

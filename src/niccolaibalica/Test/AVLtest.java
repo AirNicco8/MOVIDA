@@ -1,7 +1,7 @@
-package src.niccolaibalica.Test;
+package src.niccolaibalica.test;
 
 import src.niccolaibalica.utils;
-import src.niccolaibalica.Dict.AvlTree;
+import src.niccolaibalica.dict.AvlTree;
 import src.commons.Movie;
 
 public class AVLtest {
