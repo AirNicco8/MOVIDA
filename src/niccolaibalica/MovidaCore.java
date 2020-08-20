@@ -6,8 +6,12 @@ import src.commons.*;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
+
 
 
 public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovidaCollaborations {
@@ -140,8 +144,6 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     }
 
 
-
-
     /**
      * Cancella tutti i dati.
      *
@@ -247,14 +249,29 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     @Override
     public Movie[] searchMoviesByTitle(String title) {
-        return null;
-        //return new Movie[0];
+        Movie[] allMovies = getAllMovies();
+        LinkedList<Movie> containsTitle = new LinkedList<Movie>();
+
+        for (Movie movie : allMovies) {
+            String movieTitle = movie.getTitle();
+            if (movieTitle.length() > title.length() && movieTitle.contains(title))
+                containsTitle.add(movie);
+        }
+
+        return containsTitle.toArray(new Movie[containsTitle.size()]); // (!) forse non serve parametro
     }
 
     @Override
     public Movie[] searchMoviesInYear(Integer year) {
-        return null;
-        //return new Movie[0];
+        Movie[] allMovies = getAllMovies();
+        LinkedList<Movie> anno = new LinkedList<Movie>();
+
+        for (Movie movie : allMovies) {
+            if (movie.getYear().compareTo(year) == 0)
+                anno.add(movie);
+        }
+
+        return anno.toArray(new Movie[anno.size()]);
     }
 
     @Override
@@ -270,20 +287,42 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     }
 
     @Override
-    public Movie[] searchMostVotedMovies(Integer N) {
-        return null;
-        //return new Movie[0];
+    public Movie[] searchMostVotedMovies(Integer n) {
+        Movie[] allMovies = getAllMovies();
+
+        return (Movie[]) ord(allMovies, n, new RatingSorter().reversed(), Movie.class);
     }
 
     @Override
-    public Movie[] searchMostRecentMovies(Integer N) {
-        return null;
-        //return new Movie[0];
+    public Movie[] searchMostRecentMovies(Integer n) {
+        Movie[] allMovies = getAllMovies();
+
+        return (Movie[]) ord(allMovies, n, new YearSorter().reversed(), Movie.class);
     }
 
     @Override
     public Person[] searchMostActiveActors(Integer N) {
         return null;
         //return new Person[0];
+    }
+
+//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ M I S C $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+    private<V> V[] ord(V[] arr, Integer n, Comparator<V> c, Class<V> cl) { //(!!) testare
+       if (n > arr.length || n < 0) // Se n è > del numero di film a disposizione andiamo ad elencarli tutti
+           n = arr.length;
+       V[] ret;
+       if (sort == SortingAlgorithm.SelectionSort) {
+           SelectionSort.sort(arr, c);
+           ret = Arrays.copyOfRange(arr, 0, n);
+       } else {
+           MergeSort.sort(arr, n, c.reversed(), cl);
+           ret = Arrays.copyOfRange(arr, arr.length - n, arr.length);
+       }
+       return ret;
+    }
+
+    public boolean isInitialized(){
+        return movies != null;
     }
 }

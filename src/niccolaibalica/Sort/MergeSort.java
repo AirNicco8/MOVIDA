@@ -6,7 +6,7 @@ import java.lang.reflect.Array;
 public class MergeSort{
     //TODO quale Comparator usare qui? Dobbiamo poter scegliere?
     //TODO c'e' bisogno di tipizzare?
-    public<V> void merge (V[] a, V[] l, V[] r, int left, int right, Comparator<V> c) {
+    public static<V> void merge (V[] a, V[] l, V[] r, int left, int right, Comparator<V> c) {
         int i = 0, j = 0, k = 0;
         while (i < left && j < right) {
             if (c.compare(l[i], r[j]) <= 0) { //TODO testare come operano i comparators
@@ -24,7 +24,7 @@ public class MergeSort{
         }
   }
 
-  public<V> void sort(V[] a, int n, Comparator<V> c, Class<V> param) {
+  public static<V> void sort(V[] a, int n, Comparator<V> c, Class<V> param) {
       if (n < 2) {
           return;
       }
