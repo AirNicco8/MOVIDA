@@ -26,10 +26,10 @@ public class HashCon<V> implements Dictionary<V> {
   private int TABLE_SIZE;
   private int size;
   private ConHashEntry[] table;
-  private final V param;
+  final Class<V> param;
 
   /* Constructor */
-  public HashCon(int ts, V p) {
+  public HashCon(int ts,Class<V> p) {
         size = 0;
         TABLE_SIZE = ts;
         table = new ConHashEntry[TABLE_SIZE];

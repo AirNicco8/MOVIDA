@@ -5,9 +5,9 @@ import src.niccolaibalica.utils;
 
 public class SelectionSort{
 
-  utils u = new utils();
+  public static<V> void sort(V[] arr, Comparator<V> c){
+    utils u = new utils();
 
-  public<V> void sort(V[] arr, Comparator<V> c){
         for (int i = 0; i < arr.length - 1; i++) {
             int index = i;
             for (int j = i + 1; j < arr.length; j++){

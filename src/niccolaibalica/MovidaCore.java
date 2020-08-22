@@ -1,5 +1,6 @@
 package src.niccolaibalica;
 
+import src.niccolaibalica.asdlab.*;
 import src.niccolaibalica.dict.*;
 import src.niccolaibalica.sort.*;
 import src.commons.*;
@@ -20,6 +21,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     MapImplementation map;
     Dictionary<Movie> movies;
     Dictionary<Person> people;
+    GrafoLA collabs; // struttura Collaborations, nodi = attori & archi = Collaboration
 
     public MovidaCore() {
         // TODO debugging / default values
@@ -27,6 +29,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         this.map = MapImplementation.AVL;
         this.movies = null;
         this.people = null;
+        this.collabs = null;
     }
 
 /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
@@ -150,6 +153,9 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * Sar� quindi necessario caricarne altri per proseguire.
      */
     public void clear() {
+       movies = null;
+       people = null;
+       collabs = null;
     }
 
     /**
@@ -158,7 +164,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return numero di film totali
      */
     public int countMovies() {
-        return 0;
+        return isInitialized() ? movies.count() : 0;
     }
 
     /**
@@ -167,7 +173,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return numero di persone totali
      */
     public int countPeople() {
-        return 0;
+        return isInitialized() ? people.count() : 0;
     }
 
     /**
@@ -208,7 +214,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return array di film
      */
     public Movie[] getAllMovies() {
-        return null;
+        return isInitialized() ? movies.toArray() : new Movie[0];
     }
 
     /**
@@ -217,7 +223,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return array di persone
      */
     public Person[] getAllPeople() {
-        return null;
+        return isInitialized() ? people.toArray() : new Person[0];
     }
 
 
