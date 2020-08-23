@@ -8,10 +8,15 @@ import src.commons.*;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
+
+
+
 
 
 
@@ -21,7 +26,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     MapImplementation map;
     Dictionary<Movie> movies;
     Dictionary<Person> people;
-    GrafoLA collabs; // struttura Collaborations, nodi = attori & archi = Collaboration
+    GrafoLA collabs; // struttura di Collaborations, nodi = attori | archi = Collaboration(lista di film in comune)
 
     public MovidaCore() {
         // TODO debugging / default values
@@ -229,18 +234,62 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLE COLLAB $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
-
-
     @Override
-    public Person[] getDirectCollaboratorsOf(Person actor) {
-        return null;
-        //return new Person[0];
-    }
+     public Person[] getDirectCollaboratorsOf(Person actor) {
+         if(isInitialized())
+         {
+             Nodo node = collabs.nodo(containsActor(actor));
+             Person[] arr;
+             if(node != null){
+                 arr = new Person[collabs.gradoUscente(node)];
+                 List<Arco> archiIncidenti =  (List <Arco>)collabs.archiUscenti(node);
+                 for (int i = 0; i < arr.length; i++) {
+                     Nodo dest = archiIncidenti.get(i).dest;
+                     arr[i] = (Person)collabs.infoNodo(dest);
+                 }
+             }
+             else
+                 arr = new Person[0];
+             return arr;
+         }
+         else {
+             return new Person[0];
+         }
+     }
 
     @Override
     public Person[] getTeamOf(Person actor) {
-        return null;
-        //return new Person[0];
+          if(isInitialized())
+         {
+             HashMap<Nodo, Boolean> seen = new HashMap<>();   //True nodo visitato, False nodo inesplorato
+             Queue<Nodo> front = new LinkedList<>();         //front per BFS
+             LinkedList<Person> team = new LinkedList<>();       //Lista da ritornare
+             Nodo start = collabs.nodo(containsActor(actor));  //Recuperiamo il nodo di origine della visista
+             if(start != null){
+                 seen.put(start, true);                          //Visitiamo il nodo
+                 front.add(start);                              //Aggiungiamo la start alla front
+                 while(!front.isEmpty()){
+                     Nodo u = front.poll();
+                     team.add((Person)collabs.infoNodo(x));   //Aggiungiamo l'attore al team
+                     seen.putIfAbsent(u, true);
+                     List<Arco> archi = (List<Arco>)collabs.archiUscenti(x);
+                     Iterator<Arco> ite =  archi.iterator();
+                     while(ite.hasNext()){
+                         Arco arco = ite.next();
+                         Nodo dest = arco.dest;
+                         Boolean visitato = seen.get(dest);       //Controlliamo se il nodo è stato visitato
+                         if(visitato == null){
+                             front.add(dest);
+                             seen.put(dest, true);
+                         }
+                     }
+                 }
+             }
+             return team.toArray(new Person[team.size()]);
+         }
+         else{
+             return new Person[0];
+         }
     }
 
     @Override
@@ -249,6 +298,69 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         //return new Collaboration[0];
     }
 
+
+    private void createMovieCollaboration(Movie movie){
+        Person[] cast = movie.getCast();
+        for (int i = 0; i < cast.length - 1; i++) { // Ciclo su tutte le possibili coppie
+            for (int j = i + 1; j < cast.length; j++) {
+                Person a = cast[i];
+                Person b = cast[j];
+                createCollaboration(a, b, movie);
+            }
+        }
+    }
+
+    private void createCollaboration(Person a, Person b, Movie movie){
+        boolean isNew = false;
+        int f,g;
+
+        f = containsActor(a);
+        g = containsActor(b);
+
+        if (f != -1 && g != -1) {                 // Se  i nodi sono entrambi presenti controlliamo se sono adiacenti
+            Nodo nodoA = collabs.nodo(f);
+            Nodo nodoB = collabs.nodo(g);
+
+            Arco arco = collabs.sonoAdiacenti(nodoA, nodoB);
+            if(arco != null){
+                Collaboration collab = (Collaboration) collabs.infoArco(arco);   //Se sono adiacenti esiste già una collaborazione
+                if(!collab.searchMovie(movie))
+                    collab.addMovie(movie);                       //Aggiungiamo il movie alla lista dei film
+            }
+            else
+                isNew = true;
+        }
+        else{
+                if (f == -1) {                            //Se anche uno di loro non è presente si tratta allora di una nuova collaborazione
+                    nodoA = collabs.aggiungiNodo(a);
+                }
+                if(g == -1){
+                    nodoB = collabs.aggiungiNodo(b);
+                }
+                    isNew = true;
+        }
+
+        if(isNew){
+            Collaboration newColl = new Collaboration(a, b);
+            newColl.addMovie(movie);
+            collabs.aggiungiArco(nodoA, nodoB, newColl);
+            collabs.aggiungiArco(nodoB, nodoA, newColl);
+        }
+
+    }
+
+    private int containsActor(Actor a){ //ritorna indice noda nel grafo se presente, -1 se assente
+
+        NodoLA[] arr = collabs.nodi();
+
+        for(NodoLA n in arr){
+          Actor tmp = (Actor) collabs.infoNodo(n);
+          if(tmp.getName().compareToIgnoreCase(a.getName()) == 0)
+            return n.indice;
+        }
+
+        return -1;
+    }
 
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLE RICERCHE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
