@@ -8,15 +8,13 @@ import src.commons.*;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
-
-
-
 
 
 
@@ -31,10 +29,11 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     public MovidaCore() {
         // TODO debugging / default values
         this.sort = SortingAlgorithm.SelectionSort;
-        this.map = MapImplementation.AVL;
+        this.map = MapImplementation.HashConcatenamento;
         this.movies = null;
         this.people = null;
         this.collabs = null;
+        this.db_utils = new utils();
     }
 
 /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
@@ -44,7 +43,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         if (map == MapImplementation.AVL)
             return new AvlTree<V>(c);
         else if (map == MapImplementation.HashConcatenamento)
-            return new HashCon<V>(42, c);   //TODO replace 42 with valid value
+            return new HashCon<V>(120, c);   //TODO replace 42 with valid value
         return null;
     }
 
@@ -68,7 +67,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
                if( movies != null && people != null){
                    Dictionary<Person> newPeople = createDizionario(Person.class);
                    Dictionary<Movie> newMovies = createDizionario(Movie.class);
-                   for (Movie movie : getAllMovies()) { // (!) metodo che verrà implementato nella parte db
+                   for (Movie movie : getAllMovies()) {
                        newMovies.insert(movie.getTitle(), movie);
                    }
                    for (Person person : getAllPeople()) {
@@ -104,7 +103,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      *
      * @throws MovidaFileException in caso di errore di caricamento
      */
-    public void loadFromFile(File f) throws MovidaFileException {
+
+    public void OldLoadFromFile(File f) throws MovidaFileException {
         try {
             Scanner fileReader = new Scanner(f);
             while (fileReader.hasNextLine()) {
@@ -134,6 +134,48 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         }
     }
 
+    public void loadFromFile(File f){
+        Movie[] films = db_utils.extFilms(f);
+
+        if (!isInitialized()) {
+            movies = createDizionario(Movie.class);
+            people = createDizionario(Person.class);
+            this.collabs = new GrafoLA();
+        }
+
+        for(Movie film: films){
+            // Controllo se esiste un film nel DB già caricato con il seguente titolo
+            String title = film.getTitle().toLowerCase().trim().replaceAll("\\s", "");
+            System.out.println(title);
+                if (this.movies.search(title) != null) {
+                    this.movies.delete(title);
+                }
+
+
+            Person director = people.search(film.getDirector().getName()); //cerco se il regista è già nella struttura
+                if (director == null)                  //se non lo trovo, lo creo
+                {
+                    Person dir = new Person(film.getDirector().getName());
+                    people.insert(film.getDirector().getName(), dir);
+                }
+
+            Person[] cast = film.getCast();
+            Person[] actor = new Person[cast.length];
+                for (int i = 0; i < actor.length; i++)
+                {
+                    actor[i] = people.search(cast[i].getName()); //cerco se l'attore è già nella struttura
+                    if (actor[i] == null) //se non lo trovo lo creo
+                    {
+                        Person newActor = new Person(cast[i].getName());
+                        people.insert(newActor.getName(), newActor);
+                    }
+                }
+
+
+            this.movies.insert(title, film);
+            createMovieCollaboration(film);
+        }
+    }
 
 
     /**
@@ -147,9 +189,38 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      *
      * @throws MovidaFileException in caso di errore di salvataggio
      */
-    public void saveToFile(File f) throws MovidaFileException {
 
-    }
+    public void saveToFile(File f){
+       try {
+
+           // Controllo i permessi di scrittura
+           if(f.canWrite()){
+               // Uso un BufferedWriter passando un FileWriter con append settato a false
+               // in modo da sovrascrivere dall'inizio il nuovo file
+               BufferedWriter bw = new BufferedWriter(new FileWriter(f.getName(), false));
+               Movie[] m = this.movies.toArray();
+               for (Movie movie : m) {
+                   bw.write("Title: " + movie.getTitle());
+                   bw.newLine();
+                   bw.write("Year: " + movie.getYear().toString());
+                   bw.newLine();
+                   bw.write("Director: " + movie.getDirector().getName());
+                   bw.newLine();
+                   bw.write("Cast: " + movie.getCast());
+                   bw.newLine();
+                   bw.write("Votes: " + movie.getVotes().toString());
+                   bw.newLine();
+                   bw.newLine(); // Aggiungo una linea per separare i campi
+               }
+               bw.close();
+           }
+
+       }
+       catch(MovidaFileException | IOException e){
+           e.getMessage();
+           e.printStackTrace();
+       }
+   }
 
 
     /**
@@ -235,10 +306,10 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLE COLLAB $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
     @Override
-     public Person[] getDirectCollaboratorsOf(Person actor) {
+     public Person[] getDirectCollaboratorsOf(Person a) {
          if(isInitialized())
          {
-             Nodo node = collabs.nodo(containsActor(actor));
+             Nodo node = collabs.nodo(containsActor(a));
              Person[] arr;
              if(node != null){
                  arr = new Person[collabs.gradoUscente(node)];
@@ -258,21 +329,21 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      }
 
     @Override
-    public Person[] getTeamOf(Person actor) {
+    public Person[] getTeamOf(Person a) {
           if(isInitialized())
          {
              HashMap<Nodo, Boolean> seen = new HashMap<>();   //True nodo visitato, False nodo inesplorato
              Queue<Nodo> front = new LinkedList<>();         //front per BFS
              LinkedList<Person> team = new LinkedList<>();       //Lista da ritornare
-             Nodo start = collabs.nodo(containsActor(actor));  //Recuperiamo il nodo di origine della visista
+             Nodo start = collabs.nodo(containsActor(a));  //Recuperiamo il nodo di origine della visista
              if(start != null){
                  seen.put(start, true);                          //Visitiamo il nodo
                  front.add(start);                              //Aggiungiamo la start alla front
                  while(!front.isEmpty()){
                      Nodo u = front.poll();
-                     team.add((Person)collabs.infoNodo(x));   //Aggiungiamo l'attore al team
+                     team.add((Person)collabs.infoNodo(u));   //Aggiungiamo l'attore al team
                      seen.putIfAbsent(u, true);
-                     List<Arco> archi = (List<Arco>)collabs.archiUscenti(x);
+                     List<Arco> archi = (List<Arco>)collabs.archiUscenti(u);
                      Iterator<Arco> ite =  archi.iterator();
                      while(ite.hasNext()){
                          Arco arco = ite.next();
@@ -293,7 +364,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     }
 
     @Override
-    public Collaboration[] maximizeCollaborationsInTheTeamOf(Person actor) {
+    public Collaboration[] maximizeCollaborationsInTheTeamOf(Person a) {
         return null;
         //return new Collaboration[0];
     }
@@ -305,21 +376,30 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
             for (int j = i + 1; j < cast.length; j++) {
                 Person a = cast[i];
                 Person b = cast[j];
+                System.out.println(a.getName());
+                System.out.println(b.getName());
+
                 createCollaboration(a, b, movie);
             }
         }
     }
 
     private void createCollaboration(Person a, Person b, Movie movie){
+        Nodo nodoA = null;
+        Nodo nodoB = null;
         boolean isNew = false;
         int f,g;
 
         f = containsActor(a);
         g = containsActor(b);
 
+        System.out.println(f);
+        System.out.println(g);
+
+
         if (f != -1 && g != -1) {                 // Se  i nodi sono entrambi presenti controlliamo se sono adiacenti
-            Nodo nodoA = collabs.nodo(f);
-            Nodo nodoB = collabs.nodo(g);
+            nodoA = collabs.nodo(f);
+            nodoB = collabs.nodo(g);
 
             Arco arco = collabs.sonoAdiacenti(nodoA, nodoB);
             if(arco != null){
@@ -334,8 +414,15 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
                 if (f == -1) {                            //Se anche uno di loro non è presente si tratta allora di una nuova collaborazione
                     nodoA = collabs.aggiungiNodo(a);
                 }
+                else{
+                    nodoA = collabs.nodo(f);
+                }
+
                 if(g == -1){
                     nodoB = collabs.aggiungiNodo(b);
+                }
+                else{
+                  nodoB = collabs.nodo(g);
                 }
                     isNew = true;
         }
@@ -343,18 +430,24 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         if(isNew){
             Collaboration newColl = new Collaboration(a, b);
             newColl.addMovie(movie);
+            Person t = (Person) nodoA.info;
+            Person y = (Person) nodoB.info;
+
+            System.out.println(t.getName());
+            System.out.println(y.getName());
+
             collabs.aggiungiArco(nodoA, nodoB, newColl);
             collabs.aggiungiArco(nodoB, nodoA, newColl);
         }
 
     }
 
-    private int containsActor(Actor a){ //ritorna indice noda nel grafo se presente, -1 se assente
+    private int containsActor(Person a){ //ritorna indice noda nel grafo se presente, -1 se assente
 
-        NodoLA[] arr = collabs.nodi();
+        NodoLA[] arr = collabs.nodiLA();
 
-        for(NodoLA n in arr){
-          Actor tmp = (Actor) collabs.infoNodo(n);
+        for(NodoLA n : arr){
+          Person tmp = (Person) collabs.infoNodo(n);
           if(tmp.getName().compareToIgnoreCase(a.getName()) == 0)
             return n.indice;
         }
@@ -442,5 +535,16 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     public boolean isInitialized(){
         return movies != null;
+    }
+
+    public void printDicts(){
+      Movie[] ms = new Movie[movies.count()];
+      ms = movies.toArray();
+
+      for(int i=0; i < movies.count(); i++){
+          System.out.println(ms[i].getTitle());
+      }
+      System.out.println("//////");
+      System.out.println(Arrays.toString(people.toArray()));
     }
 }

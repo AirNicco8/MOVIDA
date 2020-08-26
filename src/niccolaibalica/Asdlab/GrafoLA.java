@@ -76,6 +76,12 @@ public class GrafoLA implements Grafo {
 		return v;
 	}
 
+	public NodoLA[] nodiLA() {
+		NodoLA[] v = new NodoLA[n];
+		System.arraycopy(nodi, 0, v, 0, n);
+		return v;
+	}
+
 	/**
 	 * Restituisce l'elenco degli archi presenti nel grafo (<font color=red>Tempo O(m)</font>).
 	 * L'elenco viene costruito scorrendo l'elenco dei nodi

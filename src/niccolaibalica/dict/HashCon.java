@@ -78,17 +78,17 @@ public class HashCon<V> implements Dictionary<V> {
 
    // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ R I C E R C A $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-   public V search(String k) throws ExceptionKeyNotFound{
+   public V search(String k){ //return null se non trova elemento
      int hash = (myHash(k) % TABLE_SIZE);
         if (table[hash] == null)
-            throw new ExceptionKeyNotFound();
+            return null;
         else
         {
             ConHashEntry entry = table[hash];
             while (entry != null && !entry.key.equals(k))
                 entry = entry.next;
             if (entry == null)
-                throw new ExceptionKeyNotFound();
+                return null;
             else
                 return ((ConHashEntry<V>)entry).data;
         }
