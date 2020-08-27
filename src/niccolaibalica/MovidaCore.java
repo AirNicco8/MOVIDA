@@ -7,14 +7,19 @@ import src.commons.*;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Set;
 
 
 
@@ -146,7 +151,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         for(Movie film: films){
             // Controllo se esiste un film nel DB già caricato con il seguente titolo
             String title = film.getTitle().toLowerCase().trim().replaceAll("\\s", "");
-            System.out.println(title);
+            //System.out.println(title);
                 if (this.movies.search(title) != null) {
                     this.movies.delete(title);
                 }
@@ -376,8 +381,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
             for (int j = i + 1; j < cast.length; j++) {
                 Person a = cast[i];
                 Person b = cast[j];
-                System.out.println(a.getName());
-                System.out.println(b.getName());
+                //System.out.println(a.getName());
+                //System.out.println(b.getName());
 
                 createCollaboration(a, b, movie);
             }
@@ -393,8 +398,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         f = containsActor(a);
         g = containsActor(b);
 
-        System.out.println(f);
-        System.out.println(g);
+        //System.out.println(f);
+        //System.out.println(g);
 
 
         if (f != -1 && g != -1) {                 // Se  i nodi sono entrambi presenti controlliamo se sono adiacenti
@@ -433,8 +438,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
             Person t = (Person) nodoA.info;
             Person y = (Person) nodoB.info;
 
-            System.out.println(t.getName());
-            System.out.println(y.getName());
+            //System.out.println(t.getName());
+            //System.out.println(y.getName());
 
             collabs.aggiungiArco(nodoA, nodoB, newColl);
             collabs.aggiungiArco(nodoB, nodoA, newColl);
@@ -459,13 +464,14 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
 
     @Override
-    public Movie[] searchMoviesByTitle(String title) {
-        Movie[] allMovies = getAllMovies();
+    public Movie[] searchMoviesByTitle(String title) { //TESTED e funziona ma fa differenza sulle maiuscole
+        Movie[] allMovies = getAllMovies();            // fixare o lasciare così?
         LinkedList<Movie> containsTitle = new LinkedList<Movie>();
 
         for (Movie movie : allMovies) {
             String movieTitle = movie.getTitle();
-            if (movieTitle.length() > title.length() && movieTitle.contains(title))
+            //System.out.println(movieTitle);
+            if (movieTitle.length() >= title.length() && movieTitle.contains(title))
                 containsTitle.add(movie);
         }
 
@@ -473,7 +479,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     }
 
     @Override
-    public Movie[] searchMoviesInYear(Integer year) {
+    public Movie[] searchMoviesInYear(Integer year) { // WORKING
         Movie[] allMovies = getAllMovies();
         LinkedList<Movie> anno = new LinkedList<Movie>();
 
@@ -486,35 +492,88 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     }
 
     @Override
-    public Movie[] searchMoviesDirectedBy(String name) {
-        return null;
-        //return new Movie[0];
+    public Movie[] searchMoviesDirectedBy(String name) {// WORKING
+        Movie[] allMovies = getAllMovies();
+        LinkedList<Movie> ret = new LinkedList<Movie>();
+
+        for (Movie m : allMovies) {
+              if (m.getDirector().getName().compareToIgnoreCase(name.trim().toLowerCase()) == 0) {
+                ret.add(m);
+              }
+        }
+        return ret.toArray(new Movie[ret.size()]);
     }
 
     @Override
-    public Movie[] searchMoviesStarredBy(String name) {
-        return null;
-        //return new Movie[0];
+    public Movie[] searchMoviesStarredBy(String name) {// WORKING
+        Movie[] allMovies = getAllMovies();
+        LinkedList<Movie> ret = new LinkedList<Movie>();
+
+        for (Movie m : allMovies) {
+            for (Person p : m.getCast()) {
+                if (p.getName().compareToIgnoreCase(name.trim().toLowerCase()) == 0) {
+                  ret.add(m);
+                  break;
+                }
+            }
+        }
+        return ret.toArray(new Movie[ret.size()]);
     }
 
     @Override
-    public Movie[] searchMostVotedMovies(Integer n) {
+    public Movie[] searchMostVotedMovies(Integer n) { // WORKING
         Movie[] allMovies = getAllMovies();
 
         return (Movie[]) ord(allMovies, n, new RatingSorter().reversed(), Movie.class);
     }
 
     @Override
-    public Movie[] searchMostRecentMovies(Integer n) {
+    public Movie[] searchMostRecentMovies(Integer n) { // WORKING
         Movie[] allMovies = getAllMovies();
 
         return (Movie[]) ord(allMovies, n, new YearSorter().reversed(), Movie.class);
     }
 
     @Override
-    public Person[] searchMostActiveActors(Integer N) {
-        return null;
-        //return new Person[0];
+    public Person[] searchMostActiveActors(Integer n) { // WORKING
+        Person[] allPeople = getAllPeople();
+        Person[] ret = new Person[n];
+        int tot, i=0;
+        Map<Person, Integer> myMap = new HashMap<Person, Integer>();
+
+        for(Person p : allPeople){
+          tot = searchMoviesStarredBy(p.getName()).length;
+          myMap.put(p, tot);
+        }
+
+        Set<Entry<Person, Integer>> entries = myMap.entrySet();
+
+        Comparator<Entry<Person, Integer>> valueComparator = new Comparator<Entry<Person, Integer>>() { @Override public int compare(Entry<Person, Integer> e1, Entry<Person, Integer> e2) { Integer v1 = e1.getValue(); Integer v2 = e2.getValue(); return v1.compareTo(v2); } };
+
+        // Sort method needs a List, so let's first convert Set to List in Java
+        List<Entry<Person, Integer>> listOfEntries = new ArrayList<Entry<Person, Integer>>(entries);
+
+        // sorting HashMap by values using comparator
+        Collections.sort(listOfEntries, valueComparator.reversed() );
+
+        LinkedHashMap<Person, Integer> sortedByValue = new LinkedHashMap<Person, Integer>(listOfEntries.size());
+
+        for(Entry<Person, Integer> entry : listOfEntries){
+            sortedByValue.put(entry.getKey(), entry.getValue());
+        }
+
+        //System.out.println("HashMap after sorting entries by values ");
+        Set<Entry<Person, Integer>> entrySetSortedByValue = sortedByValue.entrySet();
+
+        for(Entry<Person, Integer> mapping : entrySetSortedByValue){
+            //System.out.println(mapping.getKey() + " ==> " + mapping.getValue());
+            ret[i] = mapping.getKey();
+            i++;
+            if(i == n)
+              break;
+        }
+
+        return ret;
     }
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ M I S C $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

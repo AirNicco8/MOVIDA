@@ -35,7 +35,7 @@ public class utils<V> {
                             throw new MovidaFileException();
                         }
                         lineFilm[j] = line;
-                        System.out.println(line);
+                        //System.out.println(line);
                     }
 
 
@@ -64,7 +64,7 @@ public class utils<V> {
           for(int i=0;i<5;i++) {
               String[] s = f[i].split(":");
               filmValues[i] = s[1];
-              System.out.println(filmValues[i]);
+              //System.out.println(filmValues[i]);
           }
           return filmValues;
       }

@@ -61,4 +61,9 @@ public class Movie /*implements Comparable<Movie>*/ {
 		return this.director;
 	}
 
+	@Override
+	public String toString() {
+		return "\n"+getTitle();
+	}
+
 }
