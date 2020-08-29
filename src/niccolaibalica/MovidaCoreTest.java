@@ -7,16 +7,12 @@ import src.commons.*;
 public class MovidaCoreTest {
     public static void main(String[] args){
         MovidaCore mc = new MovidaCore();
+        // user.dir => bin
         String path = "esempio-formato-dati.txt";
         Movie[] arr = new Movie[10];
         Person[] arrp = new Person[10];
 
-        if (!new File(path).exists())
-          {
-             System.out.println("Unvalid path");
-          }
-
-        mc.loadFromFile(new File(path));
+        mc.loadFromFile(mc.toDBfile(path));
         mc.printDicts();
         System.out.println("");
         System.out.println("%%%%%%% test searchMoviesByTitle %%%%%%%%%");

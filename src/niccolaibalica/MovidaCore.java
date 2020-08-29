@@ -30,6 +30,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     Dictionary<Movie> movies;
     Dictionary<Person> people;
     GrafoLA collabs; // struttura di Collaborations, nodi = attori | archi = Collaboration(lista di film in comune)
+    String pathToDB = System.getProperty("user.dir") + "/../db/";
 
     public MovidaCore() {
         // TODO debugging / default values
@@ -109,37 +110,12 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @throws MovidaFileException in caso di errore di caricamento
      */
 
-    public void OldLoadFromFile(File f) throws MovidaFileException {
-        try {
-            Scanner fileReader = new Scanner(f);
-            while (fileReader.hasNextLine()) {
-                String title = fileReader.nextLine().split(":")[1].trim();
-                //TODO remove prints
-                System.out.println(title);
-                String year = fileReader.nextLine().split(":")[1].trim();
-                System.out.println(year);
-                String director = fileReader.nextLine().split(":")[1].trim();
-                System.out.println(director);
-                String cast = fileReader.nextLine().split(":")[1].trim();
-                System.out.println(cast);
-                String votes = fileReader.nextLine().split(":")[1].trim();
-                System.out.println(votes);
-                if (title.isEmpty() || year.isEmpty() || director.isEmpty() || cast.isEmpty() || votes.isEmpty())
-                    throw new MovidaFileException();
-                //TODO create tokenizer, read method probably also needs data structure where to save data
-                // read returns 1 if it finds error
-                /*
-                if (tokenizer.read(title, year, director, cast, votes))
-                    throw new MovidaFileException();
-                */
-            }
-            fileReader.close();
-        } catch (FileNotFoundException e) {
+    public void loadFromFile(File f){
+        if (!f.exists()) {
+            System.out.println("Unvalid path");
             throw new MovidaFileException();
         }
-    }
 
-    public void loadFromFile(File f){
         Movie[] films = db_utils.extFilms(f);
 
         if (!isInitialized()) {
@@ -182,6 +158,10 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         }
     }
 
+    public File toDBfile(String path) {
+        return new File(pathToDB + path);
+    }
+
 
     /**
      * Salva tutti i dati su un file.
@@ -196,7 +176,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      */
 
     public void saveToFile(File f){
-       try {
+        try {
 
            // Controllo i permessi di scrittura
            if(f.canWrite()){
