@@ -67,14 +67,12 @@ public class AvlTree<V> implements Dictionary<V> {
     }
 
     private AvlNode root;
-    private int nNodes;
     final Class<V> param;
 
     /* Constructor */
     public AvlTree(Class<V> p)
     {
         root = null;
-        nNodes = 0;
         this.param = p;
     }
     /* Function to check if tree is empty */
@@ -90,18 +88,25 @@ public class AvlTree<V> implements Dictionary<V> {
 
     public int count()
     {
-        return nNodes;
+        return (size(root));
+    }
+
+    private int size(AvlNode node) {
+      if (node == null) return(0);
+      else {
+        return(size(node.getLeft()) + 1 + size(node.getRight()));
+      }
     }
 
     //ricerca, torna null se non trova elemento
 
     public V search(String searchKey) throws ExceptionKeyNotFound
     {
-        V tmp = (V)search(searchKey, root).getData();
-
-        //TODO ERROR
-        if(tmp == null) throw new ExceptionKeyNotFound();
-        else return tmp;
+        AvlNode n = search(searchKey, root);
+        if(n != null)
+         return (V) n.getData();
+       else
+         return null;
     }
 
     private AvlNode search(String searchKey, AvlNode r) throws ExceptionKeyNotFound
@@ -143,8 +148,6 @@ public class AvlTree<V> implements Dictionary<V> {
         }
 
         node.setHeight(Math.max(getHeight(node.getLeft()), getHeight(node.getRight())) + 1);
-
-        nNodes++;
 
         return checkBalanceAndRotate(k, node);
     }
@@ -195,7 +198,6 @@ public class AvlTree<V> implements Dictionary<V> {
 
             if (node.getLeft() == null && node.getRight() == null) {
                 //remove leaf node
-                nNodes--;
                 return null;
             }
 
@@ -203,13 +205,11 @@ public class AvlTree<V> implements Dictionary<V> {
                 //remove the right child
                 AvlNode tempNode = node.getRight();
                 node = null;
-                nNodes--;
                 return tempNode;
             } else if (node.getRight() == null) {
                 //remove the left child
                 AvlNode tempNode = node.getLeft();
                 node = null;
-                nNodes--;
                 return tempNode;
             }
 
@@ -374,8 +374,25 @@ public class AvlTree<V> implements Dictionary<V> {
         int a = 0;
 
         AvlNode u = root;
-        inOrderArr(u, a, arr);
+        int boh = inorder(u, arr, a);
         return arr;
+    }
+
+    private int inorder(AvlNode temp, V[] a, int i) {
+    // base case
+    if (temp == null) return i;
+
+    // go to the right of tree
+    i = inorder(temp.getRight(), a, i);
+
+
+    // copy node to array
+    a[i] =(V) temp.getData();
+    i++;
+
+    // go to the left of tree
+    i = inorder(temp.getLeft(), a, i);
+    return i;
     }
 
     public String[] toArrayKeys(){ //(!!) da testare
@@ -386,30 +403,25 @@ public class AvlTree<V> implements Dictionary<V> {
         int a = 0;
 
         AvlNode u = root;
-        inOrderArrK(u, a, arr);
+        inorderK(u, arr, a);
         return arr;
     }
 
-    private void inOrderArr(AvlNode u, int i, V[] a) {
-        if (u.getLeft() != null)
-            inOrderArr(u.getLeft(), i , a);
+    private int inorderK(AvlNode temp, String[] a, int i) {
+    // base case
+    if (temp == null) return i;
 
-        a[i] =(V) u.getData();
-        i++;
+    // go to the right of tree
+    i = inorderK(temp.getRight(), a, i);
 
-        if (u.getRight() != null)
-            inOrderArr(u.getRight(), i , a);
-    }
 
-    private void inOrderArrK(AvlNode u, int i, String[] a) {
-        if (u.getLeft() != null)
-            inOrderArrK(u.getLeft(), i , a);
+    // copy node to array
+    a[i] = temp.getKey();
+    i++;
 
-        a[i] =u.getKey();
-        i++;
-
-        if (u.getRight() != null)
-            inOrderArrK(u.getRight(), i , a);
+    // go to the left of tree
+    i = inorderK(temp.getLeft(), a, i);
+    return i;
     }
 
 }

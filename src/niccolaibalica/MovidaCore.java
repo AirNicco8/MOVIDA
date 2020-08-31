@@ -35,7 +35,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     public MovidaCore() {
         // TODO debugging / default values
         this.sort = SortingAlgorithm.MergeSort;
-        this.map = MapImplementation.HashConcatenamento;
+        this.map = MapImplementation.AVL;
         this.movies = null;
         this.people = null;
         this.collabs = null;
@@ -49,7 +49,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         if (map == MapImplementation.AVL)
             return new AvlTree<V>(c);
         else if (map == MapImplementation.HashConcatenamento)
-            return new HashCon<V>(120, c);   //TODO replace 42 with valid value
+            return new HashCon<V>(120, c);   //TODO replace with valid value
         return null;
     }
 
@@ -638,10 +638,11 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     public void printDicts(){
       Movie[] ms = new Movie[movies.count()];
+      System.out.println(movies.count());
       ms = movies.toArray();
 
-      for(int i=0; i < movies.count(); i++){
-          System.out.println(ms[i].getTitle());
+      for(int i=0; i < ms.length; i++){
+          System.out.println(ms[i]);
       }
       System.out.println("//////");
       System.out.println(Arrays.toString(people.toArray()));
