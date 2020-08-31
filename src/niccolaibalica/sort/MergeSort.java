@@ -2,49 +2,75 @@ package src.niccolaibalica.sort;
 
 import java.util.Comparator;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import src.commons.Movie;
 
 public class MergeSort{
-    //TODO quale Comparator usare qui? Dobbiamo poter scegliere?
-    //TODO c'e' bisogno di tipizzare?
-    public static<V> void merge (V[] a, V[] l, V[] r, int left, int right, Comparator<V> c) {
-        int i = 0, j = 0, k = 0;
-        while (i < left && j < right) {
-            if (c.compare(l[i], r[j]) <= 0) { //TODO testare come operano i comparators
-                a[k++] = r[j++];
-            }
-            else {
-                a[k++] = l[i++];
-            }
-        }
-        while (i < left) {
-            a[k++] = l[i++];
-        }
-        while (j < right) {
-            a[k++] = r[j++];
-        }
-  }
+      public static<V> void sort(V arr[], int l, int r, Comparator<V> c, Class<V> param)
+      {
+          if (l < r) {
+              // Find the middle point
+              int m = (l + r) / 2;
 
-  public static<V> void sort(V[] a, int n, Comparator<V> c, Class<V> param) {
-      if (n < 2) {
-          return;
+              // Sort first and second halves
+              sort(arr, l, m, c, param);
+              sort(arr, m + 1, r, c, param);
+
+              // Merge the sorted halves
+              merge(arr, l, m, r, c, param);
+          }
       }
-      int mid = n / 2;
 
-      V[] l = null;
-      l = (V[]) Array.newInstance(param, mid);
+     private static<V> void merge(V arr[], int l, int m, int r, Comparator<V> c, Class<V> param)
+     {
+         // Find sizes of two subarrays to be merged
+         int n1 = m - l + 1;
+         int n2 = r - m;
 
-      V[] r = null;
-      r = (V[]) Array.newInstance(param, n-mid);
+         /* Create temp arrays */
+         V[] L = (V[]) Array.newInstance(param, n1);
+         V[] R = (V[]) Array.newInstance(param, n2);
 
-      for (int i = 0; i < mid; i++) {
-          l[i] = a[i];
-      }
-      for (int i = mid; i < n; i++) {
-          r[i - mid] = a[i];
-      }
-      sort(l, mid, c, param);
-      sort(r, n - mid, c, param);
+         /*Copy data to temp arrays*/
+         for (int i = 0; i < n1; ++i)
+             L[i] = arr[l + i];
+         for (int j = 0; j < n2; ++j)
+             R[j] = arr[m + 1 + j];
 
-      merge(a, l, r, mid, n - mid, c);
-      }
+         /* Merge the temp arrays */
+
+         // Initial indexes of first and second subarrays
+         int i = 0, j = 0;
+
+         // Initial index of merged subarry array
+         int k = l;
+         while (i < n1 && j < n2) {
+             if (c.compare(L[i], R[j]) > 0) {
+                 arr[k] = L[i];
+                 i++;
+             }
+             else {
+                 arr[k] = R[j];
+                 j++;
+             }
+             k++;
+         }
+
+         /* Copy remaining elements of L[] if any */
+         while (i < n1) {
+             arr[k] = L[i];
+             i++;
+             k++;
+         }
+
+         /* Copy remaining elements of R[] if any */
+         while (j < n2) {
+             arr[k] = R[j];
+             j++;
+             k++;
+         }
+     }
   }

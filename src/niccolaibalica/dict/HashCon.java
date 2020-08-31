@@ -21,6 +21,10 @@ public class HashCon<V> implements Dictionary<V> {
           return this.data;
       }
 
+      public String getKey(){
+          return this.key;
+      }
+
   }
 
   private int TABLE_SIZE;
@@ -153,6 +157,27 @@ public class HashCon<V> implements Dictionary<V> {
          while (entry != null)
          {
              arr[k] = (V)entry.getData();
+             entry = entry.next;
+             k++;
+         }
+     }
+
+     return arr;
+   }
+
+   public String[] toArrayKeys(){ //(!!) da testare
+    int n = getSize();
+
+     String[] arr = new String[n];
+
+     int k = 0;
+
+     for (int i = 0; i < TABLE_SIZE; i++)
+     {
+         ConHashEntry entry = table[i];
+         while (entry != null)
+         {
+             arr[k] = entry.getKey();
              entry = entry.next;
              k++;
          }

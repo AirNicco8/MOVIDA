@@ -34,7 +34,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     public MovidaCore() {
         // TODO debugging / default values
-        this.sort = SortingAlgorithm.SelectionSort;
+        this.sort = SortingAlgorithm.MergeSort;
         this.map = MapImplementation.HashConcatenamento;
         this.movies = null;
         this.people = null;
@@ -244,8 +244,20 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return <code>true</code> se il film � stato trovato e cancellato,
      * 		   <code>false</code> in caso contrario
      */
-    public boolean deleteMovieByTitle(String title) {
-        return false;
+    public boolean deleteMovieByTitle(String title) {// WORKING
+        if(isInitialized())
+        {
+            int tot = movies.count()-1;
+            Movie dMovie = movies.search(title);
+            if (dMovie != null) {
+                deleteCollaborationsOfMovie(dMovie);
+                movies.delete(title);
+            }
+            return (movies.count() == tot);
+        }
+        else{
+            return false;
+        }
     }
 
     /**
@@ -254,8 +266,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @param title il titolo del film
      * @return record associato ad un film
      */
-    public Movie getMovieByTitle(String title) {
-        return null;
+    public Movie getMovieByTitle(String title) { // WORKING, - movie keys are title with no spaces and lowercase
+        return isInitialized() ? movies.search(title) : null;
     }
 
     /**
@@ -264,8 +276,8 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @param name il nome della persona
      * @return record associato ad una persona
      */
-    public Person getPersonByName(String name) {
-        return null;
+    public Person getPersonByName(String name) {// WORKING, - person keys are names with spaces and uppercase
+        return isInitialized() ? people.search(name) : null;
     }
 
 
@@ -278,6 +290,10 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         return isInitialized() ? movies.toArray() : new Movie[0];
     }
 
+    public String[] getAllMoviesKeys() {
+        return isInitialized() ? movies.toArrayKeys() : new String[0];
+    }
+
     /**
      * Restituisce il vettore di tutte le persone
      *
@@ -287,11 +303,15 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         return isInitialized() ? people.toArray() : new Person[0];
     }
 
+    public String[] getAllPeopleKeys() {
+        return isInitialized() ? people.toArrayKeys() : new String[0];
+    }
+
 
     /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLE COLLAB $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
     @Override
-     public Person[] getDirectCollaboratorsOf(Person a) {
+     public Person[] getDirectCollaboratorsOf(Person a) { // WORKING
          if(isInitialized())
          {
              Nodo node = collabs.nodo(containsActor(a));
@@ -314,7 +334,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      }
 
     @Override
-    public Person[] getTeamOf(Person a) {
+    public Person[] getTeamOf(Person a) {// WORKING
           if(isInitialized())
          {
              HashMap<Nodo, Boolean> seen = new HashMap<>();   //True nodo visitato, False nodo inesplorato
@@ -440,7 +460,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         return -1;
     }
 
-    /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLE RICERCHE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
+/** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLE RICERCHE $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
 
     @Override
@@ -476,9 +496,9 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         Movie[] allMovies = getAllMovies();
         LinkedList<Movie> ret = new LinkedList<Movie>();
 
-        for (Movie m : allMovies) {
-              if (m.getDirector().getName().compareToIgnoreCase(name.trim().toLowerCase()) == 0) {
-                ret.add(m);
+        for (Movie sMovie : allMovies) {
+              if (sMovie.getDirector().getName().compareToIgnoreCase(name.trim().toLowerCase()) == 0) {
+                ret.add(sMovie);
               }
         }
         return ret.toArray(new Movie[ret.size()]);
@@ -489,10 +509,10 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         Movie[] allMovies = getAllMovies();
         LinkedList<Movie> ret = new LinkedList<Movie>();
 
-        for (Movie m : allMovies) {
-            for (Person p : m.getCast()) {
+        for (Movie sMovie : allMovies) {
+            for (Person p : sMovie.getCast()) {
                 if (p.getName().compareToIgnoreCase(name.trim().toLowerCase()) == 0) {
-                  ret.add(m);
+                  ret.add(sMovie);
                   break;
                 }
             }
@@ -504,14 +524,20 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     public Movie[] searchMostVotedMovies(Integer n) { // WORKING
         Movie[] allMovies = getAllMovies();
 
-        return (Movie[]) ord(allMovies, n, new RatingSorter().reversed(), Movie.class);
+        if(sort== SortingAlgorithm.SelectionSort)
+            return (Movie[]) ord(allMovies, n, new RatingSorter().reversed(), Movie.class);
+        else
+            return (Movie[]) ord(allMovies, n, new RatingSorter(), Movie.class);
     }
 
     @Override
     public Movie[] searchMostRecentMovies(Integer n) { // WORKING
         Movie[] allMovies = getAllMovies();
 
-        return (Movie[]) ord(allMovies, n, new YearSorter().reversed(), Movie.class);
+        if(sort== SortingAlgorithm.SelectionSort)
+            return (Movie[]) ord(allMovies, n, new YearSorter().reversed(), Movie.class);
+        else
+            return (Movie[]) ord(allMovies, n, new YearSorter(), Movie.class);
     }
 
     @Override
@@ -566,10 +592,44 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
            SelectionSort.sort(arr, c);
            ret = Arrays.copyOfRange(arr, 0, n);
        } else {
-           MergeSort.sort(arr, n, c.reversed(), cl);
-           ret = Arrays.copyOfRange(arr, arr.length - n, arr.length);
+           MergeSort.sort(arr, 0, movies.count()-1, c, cl); // reversed?
+           ret = Arrays.copyOfRange(arr, 0, n);
        }
        return ret;
+    }
+
+    private void deleteCollaborationsOfMovie(Movie movie){
+        Person[] cast = movie.getCast();
+        for (int i = 0; i < cast.length-1; i++) {
+            for (int j = i+1; j < cast.length; j++) {
+                Person a = cast[i];
+                Person b = cast[j];
+                deleteCollaboration(a, b, movie);
+            }
+        }
+    }
+
+    private void deleteCollaboration(Person a, Person b, Movie movie){
+        Nodo nodoA = collabs.nodo(containsActor(a)); // Cerchiamo i nostri nodi nella hash map
+        Nodo nodoB = collabs.nodo(containsActor(b));
+
+        Arco arcoAB = collabs.sonoAdiacenti(nodoA, nodoB); // Ricerchiamo i nostri archi
+        Arco arcoBA = collabs.sonoAdiacenti(nodoB, nodoA);
+
+        Collaboration collab = (Collaboration) collabs.infoArco(arcoAB);
+
+        collab.deleteMovie(movie); // Rimuoviamo il film dalla collaborazione
+
+        if (collab.isEmpty()) { // Se non vi è alcun film in cui gli attori hanno recitato insieme
+            collabs.rimuoviArco(arcoAB); // Rimuoviamo gli archi e le collaborazioni
+            collabs.rimuoviArco(arcoBA);
+            if (collabs.gradoUscente(nodoA) == 0){ // Se il nostro nodo non ha più archi andiamo ad eliminarlo
+                collabs.rimuoviNodo(nodoA);
+            }
+            if (collabs.gradoUscente(nodoB) == 0){
+                collabs.rimuoviNodo(nodoB);
+            }
+        }
     }
 
     public boolean isInitialized(){

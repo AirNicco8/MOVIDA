@@ -378,6 +378,18 @@ public class AvlTree<V> implements Dictionary<V> {
         return arr;
     }
 
+    public String[] toArrayKeys(){ //(!!) da testare
+        int n = count();
+
+        String[] arr = new String[n];
+
+        int a = 0;
+
+        AvlNode u = root;
+        inOrderArrK(u, a, arr);
+        return arr;
+    }
+
     private void inOrderArr(AvlNode u, int i, V[] a) {
         if (u.getLeft() != null)
             inOrderArr(u.getLeft(), i , a);
@@ -387,6 +399,17 @@ public class AvlTree<V> implements Dictionary<V> {
 
         if (u.getRight() != null)
             inOrderArr(u.getRight(), i , a);
+    }
+
+    private void inOrderArrK(AvlNode u, int i, String[] a) {
+        if (u.getLeft() != null)
+            inOrderArrK(u.getLeft(), i , a);
+
+        a[i] =u.getKey();
+        i++;
+
+        if (u.getRight() != null)
+            inOrderArrK(u.getRight(), i , a);
     }
 
 }

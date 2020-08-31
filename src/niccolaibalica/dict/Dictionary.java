@@ -19,4 +19,6 @@ public interface Dictionary<V> {
      * @return Array contenente i dati del dizionario ordinati secondo la loro chiave
      */
     public V[] toArray();
+
+    public String[] toArrayKeys();
 }

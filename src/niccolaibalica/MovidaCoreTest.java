@@ -144,8 +144,117 @@ public class MovidaCoreTest {
               System.out.println(p.toString()+" numero film:"+str);
             }
 
+
+        System.out.println("");
+        System.out.println("%%%%%%% test getMovieByTitle   %%%%%%%%%");
+
+        String[] arrs =  mc.getAllMoviesKeys();
+        for(String s : arrs){
+            System.out.println(s);
+        }
+        System.out.println("");
+
+        System.out.println("ricerca di Pulp Fiction");
+                System.out.println(mc.getMovieByTitle("Pulp Fiction"));
+
+        System.out.println("");
+
+        System.out.println("ricerca di whatliesbeneath");
+                System.out.println(mc.getMovieByTitle("whatliesbeneath"));
+
+        System.out.println("");
+
+        System.out.println("ricerca di tttt");
+                System.out.println(mc.getMovieByTitle("tttt"));
+
+        System.out.println("");
+        System.out.println("%%%%%%% test getPersonByName   %%%%%%%%%");
+
+        arrs =  mc.getAllPeopleKeys();
+        for(String s : arrs){
+            System.out.println(s);
+        }
+        System.out.println("");
+
+        System.out.println("ricerca di Cybill Shepherd");
+                System.out.println(mc.getPersonByName("Cybill Shepherd"));
+
+        System.out.println("");
+
+        System.out.println("ricerca di jodiefoster");
+                System.out.println(mc.getPersonByName("jodiefoster"));
+
+        System.out.println("");
+
+        System.out.println("ricerca di tttt");
+                System.out.println(mc.getPersonByName("tttt"));
+
+        System.out.println("");
+        System.out.println("%%%%%%% test deleteMovieByTitle   %%%%%%%%%");
+
+        arr =  mc.getAllMovies();
+        for(Movie m : arr){
+            System.out.println(m);
+        }
+        System.out.println("");
+
+        System.out.println("cancellazione di the fugitive");
+                System.out.println(mc.deleteMovieByTitle("thefugitive"));
+        System.out.println("");
+
+        arr =  mc.getAllMovies();
+        for(Movie m : arr){
+            System.out.println(m);
+        }
+        System.out.println("");
+
+        arr = mc.searchMoviesStarredBy("Harrison Ford");
+            for(Movie m : arr){
+                Person[] ps = m.getCast();
+                System.out.println(m.toString());
+                for(Person p : ps)
+                  System.out.println(p.toString());
+            }
+
         System.out.println("");
         System.out.println("%%%%%%% test getDirectCollaboratorsOf %%%%%%%%%");
 
+        arrp = mc.getDirectCollaboratorsOf(mc.getPersonByName("Harrison Ford"));
+
+        System.out.println("Collaboratori diretti di Harrison Ford");
+            for(Person p : arrp){
+                System.out.println(p.toString());
+            }
+
+        System.out.println("");
+
+        arrp = mc.getDirectCollaboratorsOf(mc.getPersonByName("Robert De Niro"));
+
+        System.out.println("Collaboratori diretti di Robert De Niro");
+            for(Person p : arrp){
+                System.out.println(p.toString());
+            }
+
+        System.out.println("");
+        System.out.println("%%%%%%% test getTeamOf %%%%%%%%%");
+
+        arrp = mc.getTeamOf(mc.getPersonByName("Harrison Ford"));
+
+        System.out.println("team di Harrison Ford (mancano 2 per rimozione the fugitive)");
+            for(Person p : arrp){
+                System.out.println(p.toString());
+            }
+
+        System.out.println("");
+
+        arrp = mc.getTeamOf(mc.getPersonByName("Robert De Niro"));
+
+        System.out.println("team di Robert De Niro");
+            for(Person p : arrp){
+                System.out.println(p.toString());
+            }
+
+        System.out.println("");
+        System.out.println("%%%%%%% test maximizeCollaborationsInTheTeamOf %%%%%%%%%");
     }
 }
