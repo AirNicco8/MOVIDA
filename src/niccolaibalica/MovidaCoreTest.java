@@ -9,6 +9,7 @@ public class MovidaCoreTest {
         MovidaCore mc = new MovidaCore();
         // user.dir => bin
         String path = "esempio-formato-dati.txt";
+        String newpath = "nuovi-dati.txt";
         Movie[] arr = new Movie[10];
         Person[] arrp = new Person[10];
 
@@ -199,7 +200,11 @@ public class MovidaCoreTest {
         System.out.println("");
 
         System.out.println("cancellazione di the fugitive");
-                System.out.println(mc.deleteMovieByTitle("thefugitive"));
+                //System.out.println(mc.deleteMovieByTitle("thefugitive"));
+        System.out.println("");
+
+        System.out.println("cancellazione di taxi driver");
+                //System.out.println(mc.deleteMovieByTitle("taxidriver"));
         System.out.println("");
 
         arr =  mc.getAllMovies();
@@ -209,6 +214,16 @@ public class MovidaCoreTest {
         System.out.println("");
 
         arr = mc.searchMoviesStarredBy("Harrison Ford");
+            for(Movie m : arr){
+                Person[] ps = m.getCast();
+                System.out.println(m.toString());
+                for(Person p : ps)
+                  System.out.println(p.toString());
+            }
+
+        System.out.println("");
+
+        arr = mc.searchMoviesStarredBy("Robert De Niro");
             for(Movie m : arr){
                 Person[] ps = m.getCast();
                 System.out.println(m.toString());
@@ -256,5 +271,14 @@ public class MovidaCoreTest {
 
         System.out.println("");
         System.out.println("%%%%%%% test maximizeCollaborationsInTheTeamOf %%%%%%%%%");
+
+        Collaboration[] arrc = mc.maximizeCollaborationsInTheTeamOf(mc.getPersonByName("Harrison Ford"));
+
+        System.out.println("");
+        System.out.println("%%%%%%% test saveToFile %%%%%%%%%");
+
+        System.out.println(mc.toDBfile(newpath));
+        System.out.println("");
+        mc.saveToFile(mc.toDBfile(newpath));
     }
 }

@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
@@ -177,25 +178,36 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     public void saveToFile(File f){
         try {
-
-           // Controllo i permessi di scrittura
            if(f.canWrite()){
+                System.out.println("in save to file");
                // Uso un BufferedWriter passando un FileWriter con append settato a false
                // in modo da sovrascrivere dall'inizio il nuovo file
-               BufferedWriter bw = new BufferedWriter(new FileWriter(f.getName(), false));
+               BufferedWriter bw = new BufferedWriter(new FileWriter(f, false));
                Movie[] m = this.movies.toArray();
                for (Movie movie : m) {
+                  System.out.println(movie.toString());
                    bw.write("Title: " + movie.getTitle());
                    bw.newLine();
                    bw.write("Year: " + movie.getYear().toString());
                    bw.newLine();
                    bw.write("Director: " + movie.getDirector().getName());
                    bw.newLine();
-                   bw.write("Cast: " + movie.getCast());
-                   bw.newLine();
+                   Person[] cast = movie.getCast();
+                   String wrCast = "";
+                    for(int i=0; i<cast.length; i++)
+                    {
+                        wrCast += cast[i].getName();
+                        if( (i + 1) != cast.length ){
+                            wrCast += ", ";
+                        }
+                        else{                         //ultimo attore
+                            wrCast += '\n';
+                        }
+                    }
+                   bw.write("Cast: " + wrCast);
                    bw.write("Votes: " + movie.getVotes().toString());
                    bw.newLine();
-                   bw.newLine(); // Aggiungo una linea per separare i campi
+                   bw.newLine();
                }
                bw.close();
            }
@@ -308,7 +320,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     }
 
 
-    /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLE COLLAB $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
+/** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLE COLLAB $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
     @Override
      public Person[] getDirectCollaboratorsOf(Person a) { // WORKING
@@ -318,9 +330,9 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
              Person[] arr;
              if(node != null){
                  arr = new Person[collabs.gradoUscente(node)];
-                 List<Arco> archiIncidenti =  (List <Arco>)collabs.archiUscenti(node);
+                 List<Arco> arcs =  (List <Arco>)collabs.archiUscenti(node);
                  for (int i = 0; i < arr.length; i++) {
-                     Nodo dest = archiIncidenti.get(i).dest;
+                     Nodo dest = arcs.get(i).dest;
                      arr[i] = (Person)collabs.infoNodo(dest);
                  }
              }
@@ -337,23 +349,21 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     public Person[] getTeamOf(Person a) {// WORKING
           if(isInitialized())
          {
-             HashMap<Nodo, Boolean> seen = new HashMap<>();   //True nodo visitato, False nodo inesplorato
-             Queue<Nodo> front = new LinkedList<>();         //front per BFS
-             LinkedList<Person> team = new LinkedList<>();       //Lista da ritornare
-             Nodo start = collabs.nodo(containsActor(a));  //Recuperiamo il nodo di origine della visista
+             HashMap<Nodo, Boolean> seen = new HashMap<>();   // seen nodes
+             Queue<Nodo> front = new LinkedList<>();         // frontiera BFS
+             LinkedList<Person> team = new LinkedList<>();
+             Nodo start = collabs.nodo(containsActor(a));
              if(start != null){
-                 seen.put(start, true);                          //Visitiamo il nodo
-                 front.add(start);                              //Aggiungiamo la start alla front
+                 seen.put(start, true);
+                 front.add(start);
                  while(!front.isEmpty()){
-                     Nodo u = front.poll();
-                     team.add((Person)collabs.infoNodo(u));   //Aggiungiamo l'attore al team
+                     Nodo u = front.poll();                 // estrazione nodo dalla frontiera
+                     team.add((Person)collabs.infoNodo(u));
                      seen.putIfAbsent(u, true);
-                     List<Arco> archi = (List<Arco>)collabs.archiUscenti(u);
-                     Iterator<Arco> ite =  archi.iterator();
-                     while(ite.hasNext()){
-                         Arco arco = ite.next();
-                         Nodo dest = arco.dest;
-                         Boolean visitato = seen.get(dest);       //Controlliamo se il nodo è stato visitato
+                     List<Arco> arcs = (List<Arco>)collabs.archiUscenti(u);
+                     for(Arco arc : arcs){
+                         Nodo dest = arc.dest;
+                         Boolean visitato = seen.get(dest);
                          if(visitato == null){
                              front.add(dest);
                              seen.put(dest, true);
@@ -368,11 +378,124 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
          }
     }
 
+//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ M E T O D I   M S T $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
     @Override
-    public Collaboration[] maximizeCollaborationsInTheTeamOf(Person a) {
-        return null;
-        //return new Collaboration[0];
+    public Collaboration[] maximizeCollaborationsInTheTeamOf(Person a) { // WORKING ?
+      if(isInitialized())
+          return findMST(getTeamOf(a));
+      else
+          return new Collaboration[0];
     }
+
+    public Collaboration[] findMST(Person[] arrp){
+
+        GrafoLA subgraph = new GrafoLA();
+        int gg=1;
+
+        for(Person p : arrp){
+             Nodo n = collabs.nodo(containsActor(p));
+             subgraph.aggiungiNodo(n.info);
+        }
+
+        for(Arco ar : collabs.archi()){
+            if((containsActorSub((Person)ar.orig.info, subgraph)!= -1 ) && (containsActorSub((Person)ar.dest.info, subgraph)!= -1)){
+              //System.out.println("in if");
+              //System.out.println("Nodo origine: "+ar.orig.info);
+              //System.out.println("Nodo destination: "+ar.dest.info);
+
+              subgraph.aggiungiArco(subgraph.nodo(containsActorSub((Person)ar.orig.info, subgraph)), subgraph.nodo(containsActorSub((Person)ar.dest.info, subgraph)), ar.info);
+            }
+            gg++;
+        }
+        /*System.out.println("nodi sub");
+        for(Nodo n : subgraph.nodi()){
+             System.out.println(n.info);
+        }
+        System.out.println("");
+        System.out.println("archi sub");
+        System.out.println(subgraph.numArchi());
+        for(Arco ar : subgraph.archi()){
+            System.out.println(ar.info);
+        }
+        System.out.println("");*/
+
+        PriorityQueue<Arco> pq = new PriorityQueue<>(subgraph.numArchi(), new EdgeSorter());
+
+        Arco[] arr = subgraph.archi();
+
+        //add all the edges to priority queue, //sort the edges on weights
+        for (int i = 0; i < subgraph.numArchi(); i++) {
+            pq.add(arr[i]);
+        }
+
+        //create a parent []
+        int [] parent = new int[collabs.numNodi()];
+
+        //makeset
+        makeSet(parent);
+
+        ArrayList<Collaboration> mst = new ArrayList<>();
+        ArrayList<Arco> mstp = new ArrayList<>();
+
+        //process vertices - 1 edges
+        int index = 0;
+        while(index < subgraph.numNodi()-1){
+            Arco edge = pq.remove();
+            //check if adding this edge creates a cycle
+            int x_set = find(parent, subgraph.indice(edge.orig));
+            int y_set = find(parent, subgraph.indice(edge.dest));
+
+            if(x_set==y_set){
+                //ignore, will create cycle
+            }else {
+                //add it to our final result
+                mst.add((Collaboration)edge.info);
+                mstp.add(edge);
+                index++;
+                union(parent,x_set,y_set);
+            }
+        }
+        //print MST
+        System.out.println("Minimum Spanning Tree: ");
+
+        printGraph(mstp);
+
+        return mst.toArray(new Collaboration[mst.size()]);
+    }
+
+    public void makeSet(int [] parent){
+            //Make set- creating a new element with a parent pointer to itself.
+            for (int i = 0; i < parent.length; i++) {
+                parent[i] = i;
+            }
+        }
+
+    public int find(int [] parent, int vertex){
+        //chain of parent pointers from x upwards through the tree
+        // until an element is reached whose parent is itself
+        if(parent[vertex]!=vertex)
+            return find(parent, parent[vertex]);;
+        return vertex;
+    }
+
+    public void union(int [] parent, int x, int y){
+        int x_set_parent = find(parent, x);
+        int y_set_parent = find(parent, y);
+        //make x as parent of y
+        parent[y_set_parent] = x_set_parent;
+    }
+
+    public void printGraph(ArrayList<Arco> edgeList){
+        for (int i = 0; i <edgeList.size() ; i++) {
+            Arco edge = edgeList.get(i);
+            System.out.println("Edge-" + i + " source: " + edge.orig.info +
+                    " destination: " + edge.dest.info +
+                    " weight: " + ((Collaboration)edge.info).getScore());
+        }
+    }
+
+//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ C O N T I N U A    C O L L A B S $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
     private void createMovieCollaboration(Movie movie){
@@ -381,8 +504,6 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
             for (int j = i + 1; j < cast.length; j++) {
                 Person a = cast[i];
                 Person b = cast[j];
-                //System.out.println(a.getName());
-                //System.out.println(b.getName());
 
                 createCollaboration(a, b, movie);
             }
@@ -397,10 +518,6 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
         f = containsActor(a);
         g = containsActor(b);
-
-        //System.out.println(f);
-        //System.out.println(g);
-
 
         if (f != -1 && g != -1) {                 // Se  i nodi sono entrambi presenti controlliamo se sono adiacenti
             nodoA = collabs.nodo(f);
@@ -438,9 +555,6 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
             Person t = (Person) nodoA.info;
             Person y = (Person) nodoB.info;
 
-            //System.out.println(t.getName());
-            //System.out.println(y.getName());
-
             collabs.aggiungiArco(nodoA, nodoB, newColl);
             collabs.aggiungiArco(nodoB, nodoA, newColl);
         }
@@ -453,6 +567,19 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
         for(NodoLA n : arr){
           Person tmp = (Person) collabs.infoNodo(n);
+          if(tmp.getName().compareToIgnoreCase(a.getName()) == 0)
+            return n.indice;
+        }
+
+        return -1;
+    }
+
+    private int containsActorSub(Person a, GrafoLA g){ //ritorna indice noda nel grafo se presente, -1 se assente
+
+        NodoLA[] arr = g.nodiLA();
+
+        for(NodoLA n : arr){
+          Person tmp = (Person) g.infoNodo(n);
           if(tmp.getName().compareToIgnoreCase(a.getName()) == 0)
             return n.indice;
         }
