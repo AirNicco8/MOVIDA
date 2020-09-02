@@ -200,11 +200,11 @@ public class MovidaCoreTest {
         System.out.println("");
 
         System.out.println("cancellazione di the fugitive");
-                //System.out.println(mc.deleteMovieByTitle("thefugitive"));
+                System.out.println(mc.deleteMovieByTitle("thefugitive"));
         System.out.println("");
 
         System.out.println("cancellazione di taxi driver");
-                //System.out.println(mc.deleteMovieByTitle("taxidriver"));
+                System.out.println(mc.deleteMovieByTitle("taxidriver"));
         System.out.println("");
 
         arr =  mc.getAllMovies();
@@ -280,5 +280,25 @@ public class MovidaCoreTest {
         System.out.println(mc.toDBfile(newpath));
         System.out.println("");
         mc.saveToFile(mc.toDBfile(newpath));
+
+        System.out.println("");
+        System.out.println("%%%%%%% test setMap %%%%%%%%%");
+
+        mc.setMap(MapImplementation.AVL);
+
+        mc.printDicts();
+
+        System.out.println("");
+        System.out.println("%%%%%%% test setSort %%%%%%%%%");
+
+        mc.setSort(SortingAlgorithm.SelectionSort);
+
+        arr = mc.searchMostRecentMovies(5);
+            for(Movie m : arr){
+                String str = String.valueOf(m.getYear());
+                System.out.println(m.toString() + "  " + str);
+            }
+
+        System.out.println("");
     }
 }

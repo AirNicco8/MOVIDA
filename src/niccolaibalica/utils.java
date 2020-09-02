@@ -35,7 +35,6 @@ public class utils<V> {
                             throw new MovidaFileException();
                         }
                         lineFilm[j] = line;
-                        //System.out.println(line);
                     }
 
 
@@ -55,6 +54,7 @@ public class utils<V> {
             System.out.println(new MovidaFileException().getMessage());
             m.printStackTrace();
         }
+        
         Movie[] mov = new Movie[allFilms.size()];
         return allFilms.toArray(mov);
       }

@@ -36,7 +36,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     public MovidaCore() {
         // TODO debugging / default values
         this.sort = SortingAlgorithm.MergeSort;
-        this.map = MapImplementation.AVL;
+        this.map = MapImplementation.HashConcatenamento;
         this.movies = null;
         this.people = null;
         this.collabs = null;
@@ -46,16 +46,16 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 /** $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ GESTIONE DELLA CONFIG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$**/
 
 
-    protected<V> Dictionary<V> createDizionario(Class<V> c) {
+    protected<V> Dictionary<V> createDizionario(Class<V> c, int n) {
         if (map == MapImplementation.AVL)
             return new AvlTree<V>(c);
         else if (map == MapImplementation.HashConcatenamento)
-            return new HashCon<V>(120, c);   //TODO replace with valid value
+            return new HashCon<V>(n, c); 
         return null;
     }
 
     @Override
-    public boolean setSort(SortingAlgorithm a) {
+    public boolean setSort(SortingAlgorithm a) { // WORKING
         if (a != sort) {
             if (a == SortingAlgorithm.SelectionSort || a == SortingAlgorithm.MergeSort) {
                 sort = a;
@@ -66,14 +66,14 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     }
 
     @Override
-    public boolean setMap(MapImplementation m) {
+    public boolean setMap(MapImplementation m) { // WORKING
        boolean rit = false;
        if (m != map) {
            if (m == MapImplementation.AVL || m == MapImplementation.HashConcatenamento) {
-               map = m; // Modifichiamo il tipo di dizionario usato
+               map = m;
                if( movies != null && people != null){
-                   Dictionary<Person> newPeople = createDizionario(Person.class);
-                   Dictionary<Movie> newMovies = createDizionario(Movie.class);
+                   Dictionary<Person> newPeople = createDizionario(Person.class, movies.count());
+                   Dictionary<Movie> newMovies = createDizionario(Movie.class, people.count());
                    for (Movie movie : getAllMovies()) {
                        newMovies.insert(movie.getTitle(), movie);
                    }
@@ -118,10 +118,26 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         }
 
         Movie[] films = db_utils.extFilms(f);
+        int lines = 0;
 
-        if (!isInitialized()) {
-            movies = createDizionario(Movie.class);
-            people = createDizionario(Person.class);
+        try {
+              BufferedReader reader = new BufferedReader(new FileReader(f));
+              while (reader.readLine() != null) lines++;
+              reader.close();
+            }
+        catch(MovidaFileException | IOException e){
+                e.getMessage();
+                e.printStackTrace();
+            }
+
+        if (!dbPop()) {
+            int filmNum = (lines-(lines/10))/5; //stima film da numero righe file
+            int peopleNum = filmNum * 10;
+            System.out.println(filmNum);
+            System.out.println(peopleNum);
+            System.out.println("");
+            movies = createDizionario(Movie.class, filmNum);
+            people = createDizionario(Person.class, peopleNum);
             this.collabs = new GrafoLA();
         }
 
@@ -237,7 +253,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return numero di film totali
      */
     public int countMovies() {
-        return isInitialized() ? movies.count() : 0;
+        return dbPop() ? movies.count() : 0;
     }
 
     /**
@@ -246,7 +262,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return numero di persone totali
      */
     public int countPeople() {
-        return isInitialized() ? people.count() : 0;
+        return dbPop() ? people.count() : 0;
     }
 
     /**
@@ -257,7 +273,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * 		   <code>false</code> in caso contrario
      */
     public boolean deleteMovieByTitle(String title) {// WORKING
-        if(isInitialized())
+        if(dbPop())
         {
             int tot = movies.count()-1;
             Movie dMovie = movies.search(title);
@@ -279,7 +295,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return record associato ad un film
      */
     public Movie getMovieByTitle(String title) { // WORKING, - movie keys are title with no spaces and lowercase
-        return isInitialized() ? movies.search(title) : null;
+        return dbPop() ? movies.search(title) : null;
     }
 
     /**
@@ -289,7 +305,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return record associato ad una persona
      */
     public Person getPersonByName(String name) {// WORKING, - person keys are names with spaces and uppercase
-        return isInitialized() ? people.search(name) : null;
+        return dbPop() ? people.search(name) : null;
     }
 
 
@@ -299,11 +315,11 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return array di film
      */
     public Movie[] getAllMovies() {
-        return isInitialized() ? movies.toArray() : new Movie[0];
+        return dbPop() ? movies.toArray() : new Movie[0];
     }
 
     public String[] getAllMoviesKeys() {
-        return isInitialized() ? movies.toArrayKeys() : new String[0];
+        return dbPop() ? movies.toArrayKeys() : new String[0];
     }
 
     /**
@@ -312,11 +328,11 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
      * @return array di persone
      */
     public Person[] getAllPeople() {
-        return isInitialized() ? people.toArray() : new Person[0];
+        return dbPop() ? people.toArray() : new Person[0];
     }
 
     public String[] getAllPeopleKeys() {
-        return isInitialized() ? people.toArrayKeys() : new String[0];
+        return dbPop() ? people.toArrayKeys() : new String[0];
     }
 
 
@@ -324,7 +340,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     @Override
      public Person[] getDirectCollaboratorsOf(Person a) { // WORKING
-         if(isInitialized())
+         if(dbPop())
          {
              Nodo node = collabs.nodo(containsActor(a));
              Person[] arr;
@@ -347,7 +363,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     @Override
     public Person[] getTeamOf(Person a) {// WORKING
-          if(isInitialized())
+          if(dbPop())
          {
              HashMap<Nodo, Boolean> seen = new HashMap<>();   // seen nodes
              Queue<Nodo> front = new LinkedList<>();         // frontiera BFS
@@ -382,7 +398,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
     @Override
     public Collaboration[] maximizeCollaborationsInTheTeamOf(Person a) { // WORKING ?
-      if(isInitialized())
+      if(dbPop())
           return findMST(getTeamOf(a));
       else
           return new Collaboration[0];
@@ -651,7 +667,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     public Movie[] searchMostVotedMovies(Integer n) { // WORKING
         Movie[] allMovies = getAllMovies();
 
-        if(sort== SortingAlgorithm.SelectionSort)
+        if(sort == SortingAlgorithm.SelectionSort)
             return (Movie[]) ord(allMovies, n, new RatingSorter().reversed(), Movie.class);
         else
             return (Movie[]) ord(allMovies, n, new RatingSorter(), Movie.class);
@@ -661,7 +677,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
     public Movie[] searchMostRecentMovies(Integer n) { // WORKING
         Movie[] allMovies = getAllMovies();
 
-        if(sort== SortingAlgorithm.SelectionSort)
+        if(sort == SortingAlgorithm.SelectionSort)
             return (Movie[]) ord(allMovies, n, new YearSorter().reversed(), Movie.class);
         else
             return (Movie[]) ord(allMovies, n, new YearSorter(), Movie.class);
@@ -759,7 +775,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
         }
     }
 
-    public boolean isInitialized(){
+    public boolean dbPop(){
         return movies != null;
     }
 
