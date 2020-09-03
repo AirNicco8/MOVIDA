@@ -2,8 +2,8 @@
 Unibo ASD project 19/20
 
 Autori:
-** Lorenzo Niccolai 0000838300 **
-** Raffaello Balica matricola **
+* ** Lorenzo Niccolai 0000838300 **
+* ** Raffaello Balica matricola **
 
 GitHub: https://github.com/DatNigazz/MOVIDA
 
