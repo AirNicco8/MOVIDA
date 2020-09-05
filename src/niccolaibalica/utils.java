@@ -12,10 +12,6 @@ import java.util.Scanner;
 
 public class utils<V> {
 
-	public String printtg(Movie m) {
-		return (m.getTitle() + "!" + m.getYear().toString());
-	}
-
 	public<V> void swap(V[] array, int i, int j) {
 		V temp = array[i];
 		array[i] = array[j];
@@ -31,7 +27,7 @@ public class utils<V> {
 			while(input.hasNextLine()) {
 				for(int j = 0; j < 5; j++) {
 					String line = input.nextLine();
-					if (!line.matches("(.*):(.*)")){
+					if (!line.matches("(.*):(.*)")){ // controllo formattazione linee tramite regex
 						throw new MovidaFileException();
 					}
 					lineFilm[j] = line;
@@ -64,7 +60,6 @@ public class utils<V> {
 		for(int i=0;i<5;i++) {
 			String[] s = f[i].split(":");
 			filmValues[i] = s[1];
-			//System.out.println(filmValues[i]);
 		}
 		return filmValues;
 	}
@@ -77,14 +72,16 @@ public class utils<V> {
 		String[] castM = f[3].trim().split(",");
 		Person[] cast = this.getCast(castM);
 		Integer votes = Integer.parseInt(f[4].trim());
-		return new Movie(title,year,votes,cast,director);
+		return new Movie(title, year, votes, cast, director);
 	}
 
 	public Person[] getCast(String[] names){
 		Person[] cast = new Person[names.length];
 		for(int i = 0; i < names.length; i++){
-			cast[i] = new Person(names[i].trim());
+			names[i] =  names[i].trim();
+			cast[i] = new Person(names[i]);
 		}
+		System.out.println("");
 		return cast;
 	}
 }

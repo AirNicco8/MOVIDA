@@ -200,7 +200,7 @@ public class MovidaCoreTest {
 		System.out.println("");
 
 		System.out.println("cancellazione di the fugitive");
-				System.out.println(mc.deleteMovieByTitle("thefugitive"));
+				System.out.println(mc.deleteMovieByTitle("the fugitive"));
 		System.out.println("");
 
 		System.out.println("cancellazione di taxi driver");

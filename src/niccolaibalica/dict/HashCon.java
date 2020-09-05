@@ -89,7 +89,7 @@ public class HashCon<V> implements Dictionary<V> {
 		else
 		{
 			ConHashEntry entry = table[hash];
-			while (entry != null && !entry.key.equals(k))
+			while (entry != null && entry.key.compareToIgnoreCase(k) != 0)
 				entry = entry.next;
 			if (entry == null)
 				return null;
@@ -106,12 +106,12 @@ public class HashCon<V> implements Dictionary<V> {
 		{
 			ConHashEntry prevEntry = null;
 			ConHashEntry entry = table[hash];
-			while (entry.next != null && !entry.key.equals(k))
+			while (entry.next != null && entry.key.compareToIgnoreCase(k) != 0)
 			{
 				prevEntry = entry;
 				entry = entry.next;
 			}
-			if (entry.key.equals(k))
+			if (entry.key.compareToIgnoreCase(k) == 0)
 			{
 				if (prevEntry == null)
 					table[hash] = entry.next;
