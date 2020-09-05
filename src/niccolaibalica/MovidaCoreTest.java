@@ -6,8 +6,7 @@ import src.commons.*;
 
 public class MovidaCoreTest {
 	public static void main(String[] args){
-		MovidaCore mc = new MovidaCore();
-		// user.dir => bin
+		MovidaCore mc = new MovidaCore(SortingAlgorithm.SelectionSort, MapImplementation.AVL);
 		String path = "esempio-formato-dati.txt";
 		String newpath = "nuovi-dati.txt";
 		Movie[] arr = new Movie[10];

@@ -365,7 +365,7 @@ public class AvlTree<V> implements Dictionary<V> {
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ A R R A Y $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-	public V[] toArray(){ //(!!) da testare
+	public V[] toArray(){
 		int n = count();
 
 		V[] arr = null;
@@ -395,7 +395,7 @@ public class AvlTree<V> implements Dictionary<V> {
 	return i;
 	}
 
-	public String[] toArrayKeys(){ //(!!) da testare
+	public String[] toArrayKeys(){ 
 		int n = count();
 
 		String[] arr = new String[n];

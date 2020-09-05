@@ -143,7 +143,7 @@ public class HashCon<V> implements Dictionary<V> {
 
 	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ A R R A Y $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-	public V[] toArray(){ //(!!) da testare
+	public V[] toArray(){
 		int n = getSize();
 
 		V[] arr = null;
@@ -165,7 +165,7 @@ public class HashCon<V> implements Dictionary<V> {
 		return arr;
 	}
 
-	public String[] toArrayKeys(){ //(!!) da testare
+	public String[] toArrayKeys(){ 
 		int n = getSize();
 
 		String[] arr = new String[n];

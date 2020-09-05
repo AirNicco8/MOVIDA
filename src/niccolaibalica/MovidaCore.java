@@ -33,10 +33,9 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 	GrafoLA collabs; // struttura di Collaborations, nodi = attori | archi = Collaboration(lista di film in comune)
 	String pathToDB = System.getProperty("user.dir") + "/../db/";
 
-	public MovidaCore() {
-		// TODO debugging / default values
-		this.sort = SortingAlgorithm.SelectionSort;
-		this.map = MapImplementation.AVL;
+	public MovidaCore(SortingAlgorithm sa, MapImplementation mi) {
+		this.sort = sa;
+		this.map = mi;
 		this.movies = null;
 		this.people = null;
 		this.collabs = null;
@@ -862,7 +861,7 @@ public class MovidaCore implements IMovidaSearch,IMovidaConfig,IMovidaDB,IMovida
 
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ M I S C $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-	private<V> V[] ord(V[] arr, Integer n, Comparator<V> c, Class<V> cl) { //(!!) testare
+	private<V> V[] ord(V[] arr, Integer n, Comparator<V> c, Class<V> cl) {
 		if (n > arr.length || n < 0) // Se n è > del numero di film a disposizione andiamo ad elencarli tutti
 			n = arr.length;
 		V[] ret;

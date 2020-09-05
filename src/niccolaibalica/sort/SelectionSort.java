@@ -11,7 +11,7 @@ public class SelectionSort{
 		for (int i = 0; i < arr.length - 1; i++) {
 			int index = i;
 			for (int j = i + 1; j < arr.length; j++){
-				if (c.compare(arr[j], arr[index]) < 0){ // (!!) testare come operano i comparators
+				if (c.compare(arr[j], arr[index]) < 0){
 					index = j; //searching for lowest index
 				}
 			}
