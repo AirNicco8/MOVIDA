@@ -15,6 +15,11 @@ Trello: https://trello.com/b/hQa8sNSs/movida
 ```bash
 ./compile.sh
 ```
+## Esecuzione
+
+```bash
+./run.sh
+```
 
 ## Introduzione:
 
